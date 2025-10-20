@@ -7,6 +7,7 @@ import SpecialOffer from "@/components/SpecialOffer";
 import Footer from "@/components/Footer";
 import RealEstate from "@/components/RealEstate";
 import Interior from "@/components/Interior";
+import MarvelSanitary from "@/components/MarvelSanitary";
 export default function Home() {
   return (
     <div>
@@ -16,6 +17,7 @@ export default function Home() {
       <LandCard />
       <RealEstate />
       <Interior />
+      <MarvelSanitary />
       <ShowAllCategories />
       <SpecialOffer />
       <Footer />
