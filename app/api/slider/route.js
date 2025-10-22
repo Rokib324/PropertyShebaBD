@@ -11,7 +11,8 @@ const LoadDB = async () => {
 LoadDB();
 // Api endpoint for getting all sliders
 async function GET(request) {
-    return NextResponse.json({ message: "Slider API is working" });
+    const slides = await SliderModel.find();
+    return NextResponse.json({ success: true, slides: slides });
 }
 
 async function POST(request) {

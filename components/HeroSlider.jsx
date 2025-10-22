@@ -3,45 +3,27 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import axios from 'axios';
 
 const HeroSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const slides = [
-    {
-      id: 1,
-      image: "/re1.jpg",
-      title: "Luxury Real Estate",
-      description: "Discover premium properties in prime locations across Bangladesh"
-    },
-    {
-      id: 2,
-      image: "/int1.jpg",
-      title: "Interior Design Solutions",
-      description: "Transform your space with our expert interior design services"
-    },
-    {
-      id: 3,
-      image: "/land1.jpg",
-      title: "Prime Land Properties",
-      description: "Invest in the best land opportunities with guaranteed returns"
-    },
-    {
-      id: 4,
-      image: "/marbel1.jpg",
-      title: "Marble & Stone Works",
-      description: "Premium marble installation and stone work for your property"
-    },
-    {
-      id: 5,
-      image: "/sanitary1.jpg",
-      title: "Sanitary Solutions",
-      description: "Complete sanitary and plumbing solutions for modern living"
-    }
-  ];
+  const [slides, setSlides] = useState([]);
 
-  // Auto-play functionality - 3 seconds interval
+  const fetchSlides = async () => {
+    const response = await axios.get('/api/slider');
+    setSlides(response.data.slides);
+    console.log(response.data.slides);
+  }
+
   useEffect(() => {
+    fetchSlides();
+  }, []);
+
+  // Auto-play functionality - 5 seconds interval
+  useEffect(() => {
+    if (slides.length === 0) return;
+    
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
@@ -57,6 +39,15 @@ const HeroSlider = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
+  // Don't render if no slides are loaded yet
+  if (slides.length === 0) {
+    return (
+      <div className="relative w-full h-[60vh] overflow-hidden bg-gray-200 flex items-center justify-center">
+        <div className="text-gray-500 text-xl">Loading slides...</div>
+      </div>
+    );
+  }
+
   const currentSlideData = slides[currentSlide];
 
   return (
@@ -71,7 +62,7 @@ const HeroSlider = () => {
           priority={currentSlide === 0}
         />
         {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 bg-black/20"></div>
       </div>
 
       {/* Content Overlay */}

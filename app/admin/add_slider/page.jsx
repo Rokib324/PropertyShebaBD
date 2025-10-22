@@ -53,11 +53,11 @@ const page = () => {
             <input onChange={(e) => setImage(e.target.files[0])} type="file" id="image" name="image" className='hidden' required/>
             <div className='mt-5'>
                 <p className='text-xl'>Title</p>
-                <input type="text" id="title" name="title" onChange={onChangeHandler} value={data.title}  placeholder='Enter title' className='w-full border border-gray-300 rounded-md p-2 mt-2' required/>
+                <input type="text" id="title" name="title" placeholder='Enter title, Not more than 8 words' onChange={onChangeHandler} value={data.title}  className='w-full border border-gray-300 rounded-md p-2 mt-2' required/>
             </div>
             <div className='mt-5'>
                 <p className='text-xl'>Description</p>
-                <textarea id="description" name="description" onChange={onChangeHandler} value={data.description} placeholder='Enter a short description' className='w-full border border-gray-300 rounded-md p-2 mt-2' required></textarea>
+                <textarea id="description" name="description" placeholder='Enter a short description, Not more than 20 words' onChange={onChangeHandler} value={data.description} className='w-full border border-gray-300 rounded-md p-2 mt-2' required></textarea>
             </div>
             <button type="submit" className='bg-red-600 text-white px-4 py-2 rounded-md mt-5'>Upload</button>
         </form>
