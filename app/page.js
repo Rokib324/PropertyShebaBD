@@ -8,14 +8,16 @@ import Footer from "@/components/Footer";
 import RealEstate from "@/components/RealEstate";
 import Interior from "@/components/Interior";
 import MarvelSanitary from "@/components/MarvelSanitary";
+import WhyUs from "@/components/WhyUs";
 export default function Home() {
   return (
     <div>
       <Navbar />
       <HeroSlider />
       <Categories />
-      <LandCard />
+      <WhyUs />
       <RealEstate />
+      <LandCard />
       <Interior />
       <MarvelSanitary />
       <ShowAllCategories />

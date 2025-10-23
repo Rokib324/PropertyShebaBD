@@ -26,7 +26,7 @@ const SideBar = () => {
         <Link href='/admin/add_realestate' className='font-semibold mt-5 flex items-center gap-2 py-1 px-3 sm:px-6 border border-solid border-black shadow-[-5px_5px_0px_#494949] hover:shadow-[-5px_5px_0px_#FF0000] transition-all duration-300'>
           <Image src={assets.add_icon} alt='' width={28}/> <p>Add Real Estate</p>
         </Link>
-        <Link href='/admin/realestate_list' className='font-semibold mt-5 flex items-center gap-2 py-1 px-3 sm:px-6 border border-solid border-black shadow-[-5px_5px_0px_#494949] hover:shadow-[-5px_5px_0px_#FF0000] transition-all duration-300'>
+        <Link href='/admin/realeste_list' className='font-semibold mt-5 flex items-center gap-2 py-1 px-3 sm:px-6 border border-solid border-black shadow-[-5px_5px_0px_#494949] hover:shadow-[-5px_5px_0px_#FF0000] transition-all duration-300'>
           <Image src={assets.blog_icon} alt='' width={28}/> <p>Real Estate List</p>
         </Link>
         <Link href='/admin/add_interior' className='font-semibold mt-5 flex items-center gap-2 py-1 px-3 sm:px-6 border border-solid border-black shadow-[-5px_5px_0px_#494949] hover:shadow-[-5px_5px_0px_#FF0000] transition-all duration-300'>

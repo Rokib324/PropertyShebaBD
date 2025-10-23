@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const Cards = () => {
+const LandCard = () => {
   const [visibleCount, setVisibleCount] = useState(5);
   const [isLoading, setIsLoading] = useState(false);
   const [showAll, setShowAll] = useState(false);
@@ -236,8 +236,12 @@ const Cards = () => {
       <div className="max-w-7xl mx-auto">
         {/* Title */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-black mb-4">Land Listings</h2>
-          <div className="w-20 h-1 bg-red-600 mx-auto"></div>
+          <h2 className="text-4xl font-bold text-black mb-4">Interior Listings</h2>
+          <div className="flex items-center justify-center">
+            <div className="w-16 h-1 bg-red-600 rounded-full"></div>
+            <div className="w-2 h-2 bg-red-600 rounded-full mx-2"></div>
+            <div className="w-2 h-2 bg-red-600 rounded-full"></div>
+          </div>
         </div>
 
         {/* Property Grid */}
@@ -339,4 +343,4 @@ const Cards = () => {
   );
 };
 
-export default Cards;
+export default LandCard;

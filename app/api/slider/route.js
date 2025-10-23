@@ -19,7 +19,7 @@ async function POST(request) {
     const formData = await request.formData();
     const timestamp = Date.now();
     
-    // Handle image upload
+    // Handle image upload to public folder
     const image = formData.get('image');
     const imageByteData = await image.arrayBuffer();
     const buffer = Buffer.from(imageByteData);
@@ -34,12 +34,17 @@ async function POST(request) {
         image: `${imgUrl}`,
         date: `${timestamp}`
     }
-
     await SliderModel.create(sliderdata);
     console.log("Slider saved")
     return NextResponse.json({success: true, message: "Slider uploaded successfully!"})
 
 }
 
+async function DELETE(request) {
+    const id = request.nextUrl.searchParams.get('id');
+    await SliderModel.findByIdAndDelete(id);
+    return NextResponse.json({success: true, message: "Slider deleted successfully!"})
+}
 
-export { GET, POST };
+
+export { GET, POST, DELETE };

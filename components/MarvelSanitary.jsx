@@ -237,7 +237,11 @@ const MarvelSanitary = () => {
         {/* Title */}
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-black mb-4">Marvel & Sanitary Listings</h2>
-          <div className="w-20 h-1 bg-red-600 mx-auto"></div>
+          <div className="flex items-center justify-center">
+            <div className="w-16 h-1 bg-red-600 rounded-full"></div>
+            <div className="w-2 h-2 bg-red-600 rounded-full mx-2"></div>
+            <div className="w-2 h-2 bg-red-600 rounded-full"></div>
+          </div>
         </div>
 
         {/* Property Grid */}
