@@ -1,242 +1,49 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import axios from 'axios';
 
 const LandCard = () => {
+  const [lands, setLands] = useState([]);
   const [visibleCount, setVisibleCount] = useState(5);
   const [isLoading, setIsLoading] = useState(false);
-  const [showAll, setShowAll] = useState(false);
 
-  const allProperties = [
-    {
-      id: 1,
-      title: "Luxury Apartment",
-      location: "Dhanmondi, Dhaka",
-      originalPrice: 4500000,
-      discountedPrice: 3990000,
-      discount: 11,
-      image: "/re1.jpg",
-      type: "Apartment"
-    },
-    {
-      id: 2,
-      title: "Modern Villa",
-      location: "Gulshan, Dhaka",
-      originalPrice: 4500000,
-      discountedPrice: 3990000,
-      discount: 11,
-      image: "/re2.jpg",
-      type: "Villa"
-    },
-    {
-      id: 3,
-      title: "Commercial Space",
-      location: "Banani, Dhaka",
-      originalPrice: 4000000,
-      discountedPrice: 3500000,
-      discount: 13,
-      image: "/land1.jpg",
-      type: "Commercial"
-    },
-    {
-      id: 4,
-      title: "Residential Plot",
-      location: "Uttara, Dhaka",
-      originalPrice: 4500000,
-      discountedPrice: 3990000,
-      discount: 11,
-      image: "/land2.jpg",
-      type: "Land"
-    },
-    {
-      id: 5,
-      title: "Penthouse Suite",
-      location: "Baridhara, Dhaka",
-      originalPrice: 4500000,
-      discountedPrice: 3990000,
-      discount: 11,
-      image: "/int1.jpg",
-      type: "Penthouse"
-    },
-    {
-      id: 6,
-      title: "Office Space",
-      location: "Motijheel, Dhaka",
-      originalPrice: 4500000,
-      discountedPrice: 3990000,
-      discount: 11,
-      image: "/int2.jpg",
-      type: "Office"
-    },
-    {
-      id: 7,
-      title: "Studio Apartment",
-      location: "Wari, Dhaka",
-      originalPrice: 4500000,
-      discountedPrice: 3990000,
-      discount: 11,
-      image: "/marbel1.jpg",
-      type: "Studio"
-    },
-    {
-      id: 8,
-      title: "Duplex House",
-      location: "Dhanmondi, Dhaka",
-      originalPrice: 4500000,
-      discountedPrice: 3990000,
-      discount: 11,
-      image: "/marbel2.jpg",
-      type: "Duplex"
-    },
-    {
-      id: 9,
-      title: "Townhouse",
-      location: "Gulshan, Dhaka",
-      originalPrice: 4500000,
-      discountedPrice: 3990000,
-      discount: 11,
-      image: "/sanitary1.jpg",
-      type: "Townhouse"
-    },
-    {
-      id: 10,
-      title: "Investment Property",
-      location: "Banani, Dhaka",
-      originalPrice: 4500000,
-      discountedPrice: 3990000,
-      discount: 11,
-      image: "/sanitary2.jpg",
-      type: "Investment"
-    },
-    {
-      id: 11,
-      title: "Premium Condo",
-      location: "Dhanmondi, Dhaka",
-      originalPrice: 5000000,
-      discountedPrice: 4500000,
-      discount: 10,
-      image: "/re1.jpg",
-      type: "Condo"
-    },
-    {
-      id: 12,
-      title: "Executive Suite",
-      location: "Gulshan, Dhaka",
-      originalPrice: 4800000,
-      discountedPrice: 4200000,
-      discount: 12,
-      image: "/re2.jpg",
-      type: "Suite"
-    },
-    {
-      id: 13,
-      title: "Retail Space",
-      location: "Banani, Dhaka",
-      originalPrice: 3500000,
-      discountedPrice: 3000000,
-      discount: 14,
-      image: "/land1.jpg",
-      type: "Retail"
-    },
-    {
-      id: 14,
-      title: "Industrial Plot",
-      location: "Savar, Dhaka",
-      originalPrice: 3000000,
-      discountedPrice: 2700000,
-      discount: 10,
-      image: "/land2.jpg",
-      type: "Industrial"
-    },
-    {
-      id: 15,
-      title: "Luxury Penthouse",
-      location: "Baridhara, Dhaka",
-      originalPrice: 6000000,
-      discountedPrice: 5400000,
-      discount: 10,
-      image: "/int1.jpg",
-      type: "Penthouse"
-    },
-    {
-      id: 16,
-      title: "Co-working Space",
-      location: "Motijheel, Dhaka",
-      originalPrice: 2500000,
-      discountedPrice: 2200000,
-      discount: 12,
-      image: "/int2.jpg",
-      type: "Co-working"
-    },
-    {
-      id: 17,
-      title: "Micro Apartment",
-      location: "Wari, Dhaka",
-      originalPrice: 2000000,
-      discountedPrice: 1800000,
-      discount: 10,
-      image: "/marbel1.jpg",
-      type: "Micro"
-    },
-    {
-      id: 18,
-      title: "Family House",
-      location: "Dhanmondi, Dhaka",
-      originalPrice: 5500000,
-      discountedPrice: 4950000,
-      discount: 10,
-      image: "/marbel2.jpg",
-      type: "Family"
-    },
-    {
-      id: 19,
-      title: "Garden Villa",
-      location: "Gulshan, Dhaka",
-      originalPrice: 7000000,
-      discountedPrice: 6300000,
-      discount: 10,
-      image: "/sanitary1.jpg",
-      type: "Villa"
-    },
-    {
-      id: 20,
-      title: "Rental Property",
-      location: "Banani, Dhaka",
-      originalPrice: 4000000,
-      discountedPrice: 3600000,
-      discount: 10,
-      image: "/sanitary2.jpg",
-      type: "Rental"
+  const fetchLands = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get('/api/land');
+      setLands(response.data.lands);
+      console.log(response.data.lands);
+    } catch (error) {
+      console.error('Error fetching lands:', error);
+    } finally {
+      setIsLoading(false);
     }
-  ];
+  };
 
-  const handleLoadMore = async () => {
-    setIsLoading(true);
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setVisibleCount(prev => Math.min(prev + 5, allProperties.length));
-    setIsLoading(false);
+  useEffect(() => {
+    fetchLands();
+  }, []);
+
+  const handleLoadMore = () => {
+    setVisibleCount(prev => prev + 5);
   };
 
   const handleShowLess = () => {
     setVisibleCount(5);
-    setShowAll(false);
   };
 
-  const visibleProperties = allProperties.slice(0, visibleCount);
-  const hasMore = visibleCount < allProperties.length;
-  const isAllLoaded = visibleCount >= allProperties.length;
+  const visibleLands = lands.slice(0, visibleCount);
+  const hasMore = visibleCount < lands.length;
 
   return (
     <div className="bg-white py-2 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Title */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-black mb-4">Interior Listings</h2>
+          <h2 className="text-4xl font-bold text-black mb-4">Land Listings</h2>
           <div className="flex items-center justify-center">
             <div className="w-16 h-1 bg-red-600 rounded-full"></div>
             <div className="w-2 h-2 bg-red-600 rounded-full mx-2"></div>
@@ -244,58 +51,105 @@ const LandCard = () => {
           </div>
         </div>
 
-        {/* Property Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-          {visibleProperties.map((property) => (
-            <div key={property.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-              <div className="relative">
-                {/* Property Image */}
-                <div className="relative h-64 w-full">
-                  <Image
-                    src={property.image}
-                    alt={property.title}
-                    fill
-                    className="object-cover"
-                  />
-                  
-                  {/* Discount Badge */}
-                  <div className="absolute top-3 left-3 bg-red-600 text-white px-2 py-1 rounded-md text-sm font-bold">
-                    -{property.discount}%
-                  </div>
-                </div>
+        {/* Land Grid */}
+        {isLoading ? (
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+          </div>
+        ) : lands.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">No land properties found</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {visibleLands.map((land) => (
+              <div key={land._id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                <div className="relative">
+                  {/* Land Image */}
+                  <div className="relative h-64 w-full">
+                    <Image
+                      src={land.images?.[0] || "/land1.jpg"}
+                      alt={land.title}
+                      fill
+                      className="object-cover"
+                    />
+                    
+                    {/* Land Type Badge */}
+                    <div className="absolute top-3 left-3 bg-green-600 text-white px-2 py-1 rounded-md text-sm font-bold capitalize">
+                      {land.land_type}
+                    </div>
 
-                {/* Property Info */}
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">
-                    {property.title}
-                  </h3>
-                  
-                  <p className="text-sm text-gray-600 mb-3">{property.location}</p>
-                  
-                  {/* Pricing */}
-                  <div className="mb-4">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-lg text-gray-400 line-through">
-                        {property.originalPrice.toLocaleString()}৳
-                      </span>
-                      <span className="text-xl font-bold text-gray-900">
-                        {property.discountedPrice.toLocaleString()}৳
-                      </span>
+                    {/* Featured Badge */}
+                    {land.is_featured && (
+                      <div className="absolute top-3 right-3 bg-red-600 text-white px-2 py-1 rounded-md text-sm font-bold">
+                        Featured
+                      </div>
+                    )}
+
+                    {/* Availability Badge */}
+                    <div className={`absolute bottom-3 right-3 px-2 py-1 rounded-md text-sm font-bold ${
+                      land.is_available ? 'bg-green-600 text-white' : 'bg-gray-600 text-white'
+                    }`}>
+                      {land.is_available ? 'Available' : 'Sold'}
                     </div>
                   </div>
 
-                  {/* Order Button */}
-                  <Link
-                    href={`/property/${property.id}`}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg text-center block transition-colors duration-300"
-                  >
-                    VIEW DETAILS
-                  </Link>
+                  {/* Land Info */}
+                  <div className="p-4">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">
+                      {land.title}
+                    </h3>
+                    
+                    <p className="text-sm text-gray-600 mb-2">{land.address}</p>
+                    <p className="text-sm text-gray-500 mb-3">{land.city}, {land.district}</p>
+                    
+                    {/* Area Size */}
+                    <div className="mb-3">
+                      <span className="text-sm text-gray-600">Area: </span>
+                      <span className="text-sm font-semibold text-gray-800">
+                        {land.area_size} {land.area_size < 1 ? 'Decimal' : 'Acres'}
+                      </span>
+                    </div>
+
+                    {/* Pricing */}
+                    <div className="mb-4">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xl font-bold text-gray-900">
+                          {land.price?.toLocaleString()}৳
+                        </span>
+                        {land.price_per_unit && (
+                          <span className="text-sm text-gray-500">
+                            ({land.price_per_unit?.toLocaleString()}৳ per unit)
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Ownership Type */}
+                    <div className="mb-4">
+                      <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                        {land.ownership_type === 'freehold' ? 'Freehold' : 'Leasehold'}
+                      </span>
+                      {land.utilities_available && (
+                        <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full ml-2">
+                          Utilities Available
+                        </span>
+                      )}
+                    </div>
+
+                    {/* View Details Button */}
+                    <Link
+                      href={`/land/${land._id}`}
+                      className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg text-center block transition-colors duration-300"
+                    >
+                      VIEW DETAILS
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* Load More / Show Less Buttons */}
         <div className="text-center mt-12">
@@ -318,7 +172,7 @@ const LandCard = () => {
                   Loading...
                 </span>
               ) : (
-                `Load More Properties (${allProperties.length - visibleCount} remaining)`
+                `Load More Lands (${lands.length - visibleCount} remaining)`
               )}
             </button>
           )}
@@ -327,13 +181,13 @@ const LandCard = () => {
           {visibleCount > 5 && (
             <div className="space-y-4">
               <p className="text-gray-600 text-lg mb-4">
-                Showing {visibleCount} of {allProperties.length} properties
+                Showing {visibleCount} of {lands.length} lands
               </p>
               <button 
                 onClick={handleShowLess}
                 className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-300"
               >
-                Show Less Properties
+                Show Less Lands
               </button>
             </div>
           )}
