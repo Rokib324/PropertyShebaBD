@@ -43,8 +43,8 @@ const Footer = () => {
             {/* Contact Number */}
             <div className="flex items-center space-x-3">
               <FaPhone className="text-white" />
-              <a href="tel:+8801746514414" className="text-sm hover:underline">
-                +8801746514414
+              <a href="tel:+880 1745-525181" className="text-sm hover:underline">
+              +880 1745-525181
               </a>
             </div>
             
@@ -119,7 +119,7 @@ const Footer = () => {
             <FaYoutube className="text-white text-sm" />
           </a>
           <a 
-            href="https://wa.me/8801746514414" 
+            href="https://wa.me/+8801745525181" 
             target="_blank" 
             rel="noopener noreferrer"
             className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center hover:bg-green-600 transition-colors duration-300"
@@ -152,7 +152,7 @@ const Footer = () => {
       {/* Floating WhatsApp Button */}
       <div className="fixed bottom-6 right-6 z-50">
         <a 
-          href="https://wa.me/8801400318233?text=Hello%20Property%20Sheba%20BD,%20I%20am%20interested%20in%20your%20services"
+          href="https://wa.me/+8801745525181?text=Hello%20Property%20Sheba%20BD,%20I%20am%20interested%20in%20your%20services"
           target="_blank"
           rel="noopener noreferrer"
           className="relative group"

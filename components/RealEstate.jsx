@@ -104,7 +104,7 @@ const RealEstate = () => {
 
                     {/* Order Button */}
                     <Link
-                      href={`/property/${property._id}`}
+                      href={`/realestate/${property._id}`}
                       className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg text-center block transition-colors duration-300"
                     >
                       VIEW DETAILS

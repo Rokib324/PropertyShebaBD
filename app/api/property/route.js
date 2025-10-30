@@ -10,10 +10,23 @@ const LoadDB = async () => {
     await connectDB()
 }
 LoadDB();
-// Api endpoint for getting all sliders
+// Api endpoint for getting all properties or a specific property by ID
 async function GET(request) {
-    const properties = await PropertyModel.find();
-    return NextResponse.json({ success: true, properties: properties });
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+    
+    if (id) {
+        // Get specific property by ID
+        const property = await PropertyModel.findById(id);
+        if (!property) {
+            return NextResponse.json({ success: false, message: "Property not found" }, { status: 404 });
+        }
+        return NextResponse.json({ success: true, property: property });
+    } else {
+        // Get all properties
+        const properties = await PropertyModel.find();
+        return NextResponse.json({ success: true, properties: properties });
+    }
 }
 
 async function POST(request) {
