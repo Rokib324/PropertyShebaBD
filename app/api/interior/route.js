@@ -21,14 +21,27 @@ const ensureDBConnection = async () => {
     }
 };
 
-// Api endpoint for getting all interiors
+// Api endpoint for getting all interiors or a specific interior by ID
 async function GET(request) {
     try {
         // Ensure database is connected
         await ensureDBConnection();
         
-        const interiors = await InterirorModel.find();
-        return NextResponse.json({ success: true, interiors: interiors });
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get('id');
+        
+        if (id) {
+            // Get specific interior by ID
+            const interior = await InterirorModel.findById(id);
+            if (!interior) {
+                return NextResponse.json({ success: false, message: "Interior not found" }, { status: 404 });
+            }
+            return NextResponse.json({ success: true, interior: interior });
+        } else {
+            // Get all interiors
+            const interiors = await InterirorModel.find();
+            return NextResponse.json({ success: true, interiors: interiors });
+        }
     } catch (error) {
         console.error('Error fetching interiors:', error);
         return NextResponse.json({ 

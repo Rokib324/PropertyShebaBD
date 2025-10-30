@@ -14,23 +14,23 @@ const page = ({params}) => {
     const [error, setError] = useState(null);
     const contactPhone = process.env.NEXT_PUBLIC_CONTACT_PHONE || '+8801745525181';
 
-    const fetchLandData = async () => {
+    const fetchInteriorData = async () => {
         try {
             setIsLoading(true);
             setError(null);
-            const response = await axios.get('/api/land',{
+            const response = await axios.get('/api/interior',{
                 params: {
                     id: resolvedParams.id
                 }
             })
             if(response.data.success){
-                setData(response.data.land)
+                setData(response.data.interior)
             } else {
-                setError('Land not found')
+                setError('Interior item not found')
             }
         } catch (error) {
-            console.error('Error fetching land:', error)
-            setError('Failed to load land details')
+            console.error('Error fetching interior:', error)
+            setError('Failed to load interior details')
         } finally {
             setIsLoading(false);
         }
@@ -38,7 +38,7 @@ const page = ({params}) => {
 
     useEffect(() => {
         if (resolvedParams.id) {
-            fetchLandData()
+            fetchInteriorData()
         }
     }, [resolvedParams.id])
 
@@ -52,7 +52,7 @@ const page = ({params}) => {
                             <div className="w-8 h-8 bg-red-600 rounded-full animate-pulse"></div>
                         </div>
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-800 mb-2">Loading Land Details</h3>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2">Loading Interior Details</h3>
                     <p className="text-gray-600">Please wait while we fetch the information...</p>
                 </div>
             </div>
@@ -95,24 +95,20 @@ const page = ({params}) => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                         </svg>
                     </div>
-                    <h2 className="text-3xl font-bold text-gray-800 mb-4">Land Not Found</h2>
-                    <p className="text-gray-600 mb-8 text-lg">The land you're looking for doesn't exist or has been removed.</p>
+                    <h2 className="text-3xl font-bold text-gray-800 mb-4">Interior Item Not Found</h2>
+                    <p className="text-gray-600 mb-8 text-lg">The interior item you're looking for doesn't exist or has been removed.</p>
                     <Link href="/" className="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg">
-                        Browse Lands
+                        Browse Interiors
                     </Link>
                 </div>
             </div>
         )
     }
 
-    // Get the first image or a placeholder
-    const landImage = data.images && data.images.length > 0 ? data.images[0] : '/placeholder-land.jpg';
-    const locationDisplay = `${data.address || ''}${data.city ? ', ' + data.city : ''}${data.district ? ', ' + data.district : ''}${data.country ? ', ' + data.country : ''}`.trim();
-
-    // Format land type for display
-    const formatLandType = (type) => {
-        if (!type) return 'N/A';
-        return type.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    // Format category for display
+    const formatCategory = (category) => {
+        if (!category) return 'N/A';
+        return category.charAt(0).toUpperCase() + category.slice(1);
     }
 
   return (
@@ -125,7 +121,7 @@ const page = ({params}) => {
             <div className="relative flex items-center justify-center bg-gray-100 py-4 sm:py-6 md:py-8 px-4 sm:px-6">
                 <div className="relative w-full max-w-[1200px] h-[300px] sm:h-[400px] md:h-[500px] lg:h-[700px] overflow-hidden rounded-xl sm:rounded-2xl shadow-2xl">
                     <Image 
-                        src={landImage} 
+                        src={data.image || '/placeholder-interior.jpg'} 
                         alt={data.title} 
                         fill
                         className="object-cover transition-all duration-500" 
@@ -135,21 +131,21 @@ const page = ({params}) => {
                     {/* Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
                     
-                    {/* Featured Badge */}
-                    {data.is_featured && (
-                        <div className="absolute top-3 left-3 sm:top-4 sm:left-4 md:top-6 md:left-6 bg-yellow-500 text-white px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 rounded-lg sm:rounded-xl md:rounded-2xl text-sm sm:text-base md:text-lg font-bold shadow-2xl">
-                            ⭐ Featured
+                    {/* Stock Badge */}
+                    {!data.isAvailable && (
+                        <div className="absolute top-3 left-3 sm:top-4 sm:left-4 md:top-6 md:left-6 bg-gray-700 text-white px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 rounded-lg sm:rounded-xl md:rounded-2xl text-sm sm:text-base md:text-lg font-bold shadow-2xl">
+                            Out of Stock
                         </div>
                     )}
 
-                    {/* Land Title Overlay */}
+                    {/* Interior Title Overlay */}
                     <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 md:bottom-6 md:left-6 md:right-6 text-white">
                         <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-1 sm:mb-2 drop-shadow-2xl line-clamp-2">{data.title}</h1>
                         <div className="flex items-center text-sm sm:text-base md:text-lg lg:text-xl">
                             <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-1 sm:mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                                <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
                             </svg>
-                            <span className="drop-shadow-lg line-clamp-1">{locationDisplay || 'Location not specified'}</span>
+                            <span className="drop-shadow-lg line-clamp-1">{formatCategory(data.category)}</span>
                         </div>
                     </div>
                 </div>
@@ -161,50 +157,50 @@ const page = ({params}) => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-12">
                 {/* Main Content */}
                 <div className="lg:col-span-2 space-y-6 sm:space-y-8">
-                    {/* Land Overview */}
+                    {/* Interior Overview */}
                     <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 md:p-8">
-                        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-6">Land Overview</h2>
+                        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-6">Product Overview</h2>
                         
-                        {/* Land Features Grid */}
+                        {/* Product Features Grid */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8">
                             <div className="text-center p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl">
                                 <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
                                     <svg className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7a1.994 1.994 0 013-1.414V7a4 4 0 014-4z" />
                                     </svg>
                                 </div>
-                                <h3 className="font-semibold text-gray-800 text-xs sm:text-sm">Land Type</h3>
-                                <p className="text-xs sm:text-sm text-gray-600">{formatLandType(data.land_type)}</p>
+                                <h3 className="font-semibold text-gray-800 text-xs sm:text-sm">Category</h3>
+                                <p className="text-xs sm:text-sm text-gray-600">{formatCategory(data.category)}</p>
                             </div>
                             
                             <div className="text-center p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl">
                                 <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
                                     <svg className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4v4m0-4h4m12 0V4m0 0h-4m4 0v4m0-4h4M4 16v4m0 0h4m-4 0v-4m0 4h4m12 0v4m0 0h-4m4 0v-4m0 4h4" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                     </svg>
                                 </div>
-                                <h3 className="font-semibold text-gray-800 text-xs sm:text-sm">Area Size</h3>
-                                <p className="text-xs sm:text-sm text-gray-600">{data.area_size?.toLocaleString() || 'N/A'} sq ft</p>
+                                <h3 className="font-semibold text-gray-800 text-xs sm:text-sm">Stock</h3>
+                                <p className="text-xs sm:text-sm text-gray-600">{data.stock || 0} Units</p>
                             </div>
                             
                             <div className="text-center p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl">
                                 <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
                                     <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
-                                <h3 className="font-semibold text-gray-800 text-xs sm:text-sm">Ownership</h3>
-                                <p className="text-xs sm:text-sm text-gray-600">{formatLandType(data.ownership_type) || 'N/A'}</p>
+                                <h3 className="font-semibold text-gray-800 text-xs sm:text-sm">Status</h3>
+                                <p className="text-xs sm:text-sm text-gray-600">{data.isAvailable ? 'Available' : 'Out of Stock'}</p>
                             </div>
                             
                             <div className="text-center p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl">
                                 <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
                                     <svg className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
-                                <h3 className="font-semibold text-gray-800 text-xs sm:text-sm">Utilities</h3>
-                                <p className="text-xs sm:text-sm text-gray-600">{data.utilities_available ? 'Available' : 'Not Available'}</p>
+                                <h3 className="font-semibold text-gray-800 text-xs sm:text-sm">Price</h3>
+                                <p className="text-xs sm:text-sm text-gray-600">{data.price?.toLocaleString() || 'N/A'}৳</p>
                             </div>
                         </div>
 
@@ -222,8 +218,8 @@ const page = ({params}) => {
                     <div className="bg-gradient-to-r from-red-600 to-red-700 rounded-xl sm:rounded-2xl shadow-xl p-6 sm:p-8 text-white">
                         <div className="flex flex-col md:flex-row items-center justify-between">
                             <div className="mb-4 sm:mb-6 md:mb-0 text-center md:text-left">
-                                <h3 className="text-xl sm:text-2xl font-bold mb-2">Interested in this land?</h3>
-                                <p className="text-sm sm:text-base text-red-100">Contact our expert agents for more information and viewing arrangements.</p>
+                                <h3 className="text-xl sm:text-2xl font-bold mb-2">Interested in this item?</h3>
+                                <p className="text-sm sm:text-base text-red-100">Contact us for more information, customization options, and ordering details.</p>
                             </div>
                             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
                                 <a 
@@ -233,7 +229,7 @@ const page = ({params}) => {
                                     Call Now
                                 </a>
                                 <a 
-                                    href={`https://wa.me/${contactPhone.replace(/\D/g,'')}?text=${encodeURIComponent(`Hello, I'm interested in ${data.title} located at ${locationDisplay}. Is it available?`)}`}
+                                    href={`https://wa.me/${contactPhone.replace(/\D/g,'')}?text=${encodeURIComponent(`Hello, I'm interested in ${data.title} (${formatCategory(data.category)}). Is it available?`)}`}
                                     target="_blank" 
                                     rel="noopener noreferrer"
                                     className="border-2 border-white text-white hover:bg-white hover:text-red-600 font-semibold py-3 px-6 sm:px-8 rounded-xl transition-all duration-300 transform hover:scale-105 text-center"
@@ -254,79 +250,59 @@ const page = ({params}) => {
                             
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                                    <span className="text-gray-600 font-medium text-sm sm:text-base">Total Price</span>
+                                    <span className="text-gray-600 font-medium text-sm sm:text-base">Price</span>
                                     <span className="text-2xl sm:text-3xl font-bold text-red-600">
                                         {data.price?.toLocaleString() || 'N/A'}৳
                                     </span>
                                 </div>
                                 
-                                {data.price_per_unit && (
-                                    <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                                        <span className="text-gray-600 font-medium text-sm sm:text-base">Price Per Unit</span>
-                                        <span className="text-lg sm:text-xl text-gray-800 font-semibold">
-                                            {data.price_per_unit?.toLocaleString()}৳/sq ft
-                                        </span>
-                                    </div>
-                                )}
-                                
                                 <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                                    <span className="text-gray-600 font-medium text-sm sm:text-base">Area Size</span>
+                                    <span className="text-gray-600 font-medium text-sm sm:text-base">Category</span>
                                     <span className="text-lg sm:text-xl text-gray-800 font-semibold">
-                                        {data.area_size?.toLocaleString() || 'N/A'} sq ft
+                                        {formatCategory(data.category)}
                                     </span>
                                 </div>
                                 
-                                {data.price && data.area_size && (
-                                    <div className="flex justify-between items-center py-3 bg-green-50 rounded-xl px-4">
-                                        <span className="text-green-700 font-semibold text-sm sm:text-base">Per Sq Ft</span>
-                                        <span className="text-xl sm:text-2xl font-bold text-green-600">
-                                            {Math.round(data.price / data.area_size)?.toLocaleString()}৳
-                                        </span>
-                                    </div>
-                                )}
+                                <div className="flex justify-between items-center py-3 border-b border-gray-100">
+                                    <span className="text-gray-600 font-medium text-sm sm:text-base">Stock Available</span>
+                                    <span className={`text-lg sm:text-xl font-semibold ${
+                                        data.stock > 0 ? 'text-green-600' : 'text-red-600'
+                                    }`}>
+                                        {data.stock || 0} Units
+                                    </span>
+                                </div>
+                                
+                                <div className="flex justify-between items-center py-3 bg-green-50 rounded-xl px-4">
+                                    <span className="text-green-700 font-semibold text-sm sm:text-base">Availability</span>
+                                    <span className={`text-xl sm:text-2xl font-bold ${
+                                        data.isAvailable ? 'text-green-600' : 'text-red-600'
+                                    }`}>
+                                        {data.isAvailable ? 'In Stock' : 'Out of Stock'}
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
-                        {/* Land Information Card */}
+                        {/* Product Information Card */}
                         <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6">
-                            <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Land Information</h3>
+                            <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Product Information</h3>
                             <div className="space-y-3">
                                 <div className="flex justify-between items-center">
-                                    <span className="text-gray-600 text-sm sm:text-base">Land Type</span>
-                                    <span className="font-semibold text-gray-800 text-sm sm:text-base">{formatLandType(data.land_type)}</span>
+                                    <span className="text-gray-600 text-sm sm:text-base">Category</span>
+                                    <span className="font-semibold text-gray-800 text-sm sm:text-base">{formatCategory(data.category)}</span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-gray-600 text-sm sm:text-base">Ownership</span>
-                                    <span className="font-semibold text-gray-800 text-sm sm:text-base">{formatLandType(data.ownership_type)}</span>
+                                    <span className="text-gray-600 text-sm sm:text-base">Stock</span>
+                                    <span className="font-semibold text-gray-800 text-sm sm:text-base">{data.stock || 0} Units</span>
                                 </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-gray-600 text-sm sm:text-base">City</span>
-                                    <span className="font-semibold text-gray-800 text-sm sm:text-base">{data.city || 'N/A'}</span>
-                                </div>
-                                {data.district && (
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-gray-600 text-sm sm:text-base">District</span>
-                                        <span className="font-semibold text-gray-800 text-sm sm:text-base">{data.district}</span>
-                                    </div>
-                                )}
                                 <div className="flex justify-between items-center">
                                     <span className="text-gray-600 text-sm sm:text-base">Status</span>
                                     <span className={`inline-block px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-semibold ${
-                                        data.is_available 
+                                        data.isAvailable 
                                             ? 'bg-green-100 text-green-800' 
                                             : 'bg-red-100 text-red-800'
                                     }`}>
-                                        {data.is_available ? 'Available' : 'Sold'}
-                                    </span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-gray-600 text-sm sm:text-base">Utilities</span>
-                                    <span className={`inline-block px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-semibold ${
-                                        data.utilities_available 
-                                            ? 'bg-blue-100 text-blue-800' 
-                                            : 'bg-gray-100 text-gray-800'
-                                    }`}>
-                                        {data.utilities_available ? 'Available' : 'Not Available'}
+                                        {data.isAvailable ? 'Available' : 'Out of Stock'}
                                     </span>
                                 </div>
                             </div>
@@ -343,7 +319,7 @@ const page = ({params}) => {
                                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                     </svg>
-                                    Contact Agent
+                                    Contact Us
                                 </a>
                                 
                                 <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105">
@@ -351,7 +327,7 @@ const page = ({params}) => {
                                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                         </svg>
-                                        Save Land
+                                        Save Item
                                     </div>
                                 </button>
                                 
@@ -360,7 +336,7 @@ const page = ({params}) => {
                                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
                                         </svg>
-                                        Share Land
+                                        Share Item
                                     </div>
                                 </button>
                                 
