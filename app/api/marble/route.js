@@ -9,10 +9,31 @@ const LoadDB = async () => {
     await connectDB()
 }
 LoadDB();
-// Api endpoint for getting all marbles
+// Api endpoint for getting all marbles or a specific marble by ID
 async function GET(request) {
-    const marbles = await MarbleModel.find();
-    return NextResponse.json({ success: true, marbles: marbles });
+    try {
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get('id');
+        
+        if (id) {
+            // Get specific marble by ID
+            const marble = await MarbleModel.findById(id);
+            if (!marble) {
+                return NextResponse.json({ success: false, message: "Marble not found" }, { status: 404 });
+            }
+            return NextResponse.json({ success: true, marble: marble });
+        } else {
+            // Get all marbles
+            const marbles = await MarbleModel.find();
+            return NextResponse.json({ success: true, marbles: marbles });
+        }
+    } catch (error) {
+        console.error('Error fetching marbles:', error);
+        return NextResponse.json({ 
+            success: false, 
+            message: error.message || "Error fetching marbles"
+        }, { status: 500 });
+    }
 }
 
 async function POST(request) {

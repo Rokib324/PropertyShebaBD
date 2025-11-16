@@ -8,10 +8,31 @@ const LoadDB = async () => {
     await connectDB()
 }
 LoadDB();
-// Api endpoint for getting all marbles
+// Api endpoint for getting all sanitary items or a specific sanitary item by ID
 async function GET(request) {
-    const sanitary = await SanitaryModel.find();
-    return NextResponse.json({ success: true, sanitary: sanitary });
+    try {
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get('id');
+        
+        if (id) {
+            // Get specific sanitary item by ID
+            const sanitary = await SanitaryModel.findById(id);
+            if (!sanitary) {
+                return NextResponse.json({ success: false, message: "Sanitary item not found" }, { status: 404 });
+            }
+            return NextResponse.json({ success: true, sanitary: sanitary });
+        } else {
+            // Get all sanitary items
+            const sanitary = await SanitaryModel.find();
+            return NextResponse.json({ success: true, sanitary: sanitary });
+        }
+    } catch (error) {
+        console.error('Error fetching sanitary items:', error);
+        return NextResponse.json({ 
+            success: false, 
+            message: error.message || "Error fetching sanitary items"
+        }, { status: 500 });
+    }
 }
 
 async function POST(request) {

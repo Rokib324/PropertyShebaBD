@@ -5,9 +5,22 @@ import Image from "next/image"
 import { ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css'
 import SideBar from "@/components/AdminComponents/Sidebar"
+import { usePathname } from 'next/navigation'
 
 export default function AdminLayout({ children }) {
+    const pathname = usePathname()
+    const isLoginPage = pathname === '/admin/login'
    
+    // Don't show sidebar on login page
+    if (isLoginPage) {
+        return (
+            <div>
+                <ToastContainer theme="dark"/>
+                {children}
+            </div>
+        )
+    }
+
     return (
         <div>
             <div className="flex">

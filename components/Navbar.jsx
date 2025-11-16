@@ -57,7 +57,7 @@ const Navbar = () => {
             </div>
             <div className="w-px h-4 bg-white/25"></div>
             <div className="text-center">
-            <span>FREE SHIPPING FOR ALL ORDERS OF 3000TK</span>
+            <span>FREE SHIPPING FOR ALL ORDERS OF 30000TK</span>
           </div>
           </div>
 
