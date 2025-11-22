@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { FaChevronLeft, FaChevronRight, FaHeart } from 'react-icons/fa';
 
 const SpecialOffer = () => {
@@ -88,7 +87,7 @@ const SpecialOffer = () => {
           <div className="space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-black">SALE PRODUCTS</h2>
+              <h2 className="text-2xl font-bold text-black">Special Offers Right Now</h2>
               <div className="flex space-x-2">
                 <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors duration-300">
                   <FaChevronLeft className="text-sm" />
