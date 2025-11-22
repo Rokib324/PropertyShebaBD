@@ -16,7 +16,6 @@ export default function Home() {
       <Navbar />
       <HeroSlider />
       <Categories />
-      <WhyUs />
       <RealEstate />
       <LandCard />
       <Interior />
@@ -24,6 +23,7 @@ export default function Home() {
       <Sanitary />
       <ShowAllCategories />
       <SpecialOffer />
+      <WhyUs />
       <Footer />
     </div>
   );

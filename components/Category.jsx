@@ -85,7 +85,7 @@ const Categories = () => {
               <Link href={category.link} className="block group">
                 <div className="flex flex-col items-center">
                   {/* Circular Image */}
-                  <div className="relative w-32 h-32 mb-4 group-hover:scale-105 transition-transform duration-300">
+                  <div className="relative w-48 h-48 mb-4 group-hover:scale-105 transition-transform duration-300">
                     <div className="w-full h-full rounded-full overflow-hidden border-4 border-gray-200 group-hover:border-red-500 transition-colors duration-300">
                       <Image
                         src={category.image}
