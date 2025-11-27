@@ -7,9 +7,9 @@
     "build": "next build",
     "build:turbo": "next build --turbopack",
     "start": "node app.js",
-    "start:server": "node server.js",
     "lint": "eslint"
   },
+
   "dependencies": {
     "axios": "^1.12.2",
     "mongoose": "^8.19.1",
