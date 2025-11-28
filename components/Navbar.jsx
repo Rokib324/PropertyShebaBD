@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
 import { 
   FaChevronDown, 
   FaFacebookF, 
@@ -16,14 +18,24 @@ import { CiHeart, CiUser } from 'react-icons/ci';
 import { LiaBarsSolid, LiaShoppingBagSolid } from 'react-icons/lia';
 
 const Navbar = () => {
+  const router = useRouter();
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showResults, setShowResults] = useState(false);
   const categoriesRef = useRef(null);
+  const searchRef = useRef(null);
+  const searchTimeoutRef = useRef(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (categoriesRef.current && !categoriesRef.current.contains(event.target)) {
         setIsCategoriesOpen(false);
+      }
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowResults(false);
       }
     };
 
@@ -32,6 +44,113 @@ const Navbar = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // Handle hash scrolling on page load
+  useEffect(() => {
+    const handleHashScroll = () => {
+      const hash = window.location.hash;
+      if (hash) {
+        const sectionId = hash.substring(1); // Remove the # symbol
+        setTimeout(() => {
+          const element = document.getElementById(sectionId);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
+      }
+    };
+
+    // Scroll on initial load if hash exists
+    handleHashScroll();
+
+    // Also listen for hash changes
+    window.addEventListener('hashchange', handleHashScroll);
+    return () => {
+      window.removeEventListener('hashchange', handleHashScroll);
+    };
+  }, []);
+
+  // Debounced search function
+  useEffect(() => {
+    // Clear previous timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    // If search query is too short, clear results
+    if (searchQuery.trim().length < 2) {
+      setSearchResults([]);
+      setShowResults(false);
+      setIsSearching(false);
+      return;
+    }
+
+    // Set loading state
+    setIsSearching(true);
+    setShowResults(true);
+
+    // Debounce search API call
+    searchTimeoutRef.current = setTimeout(async () => {
+      try {
+        const response = await axios.get(`/api/search?q=${encodeURIComponent(searchQuery.trim())}`);
+        if (response.data.success) {
+          setSearchResults(response.data.results || []);
+        } else {
+          setSearchResults([]);
+        }
+      } catch (error) {
+        console.error('Search error:', error);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300); // 300ms debounce delay
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [searchQuery]);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim().length >= 2) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setShowResults(false);
+      setSearchQuery('');
+    }
+  };
+
+  const handleResultClick = (link) => {
+    router.push(link);
+    setShowResults(false);
+    setSearchQuery('');
+  };
+
+  const handleCategoryClick = (e, sectionId) => {
+    e.preventDefault();
+    setIsCategoriesOpen(false);
+    
+    // Check if we're on the home page
+    if (window.location.pathname === '/') {
+      // Scroll to section smoothly
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    } else {
+      // Navigate to home page with hash, then scroll
+      router.push(`/#${sectionId}`);
+      // Wait for navigation and then scroll
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  };
 
   return (
     <nav className="w-full">
@@ -102,17 +221,95 @@ const Navbar = () => {
           </div>
 
           {/* Search Bar - Hidden on mobile */}
-          <div className="w-full md:flex flex-1 max-w-2xl mx-8 ">
-            <div className="relative w-full">
+          <div className="w-full md:flex flex-1 max-w-2xl mx-8">
+            <form onSubmit={handleSearchSubmit} className="relative w-full" ref={searchRef}>
               <input
                 type="text"
-                placeholder="Search for products"
-                className="w-full py-1 px-4 border border-red-600 bg-white rounded-full text-gray-700 focus:outline-none focus:ring-1 focus:ring-red-300"
+                placeholder="Search for products, categories..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => {
+                  if (searchResults.length > 0 || searchQuery.trim().length >= 2) {
+                    setShowResults(true);
+                  }
+                }}
+                className="w-full py-1 px-4 pr-12 border border-red-600 bg-white rounded-full text-gray-700 focus:outline-none focus:ring-1 focus:ring-red-300"
               />
-              <button className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-red-600 text-white p-2 rounded-full hover:bg-red-700">
+              <button 
+                type="submit"
+                className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-red-600 text-white p-2 rounded-full hover:bg-red-700 transition-colors"
+              >
                 <FaSearch className="text-xs" />
               </button>
-            </div>
+
+              {/* Search Results Dropdown */}
+              {showResults && (searchQuery.trim().length >= 2 || searchResults.length > 0) && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl z-50 max-h-96 overflow-y-auto">
+                  {isSearching ? (
+                    <div className="p-4 text-center text-gray-500">
+                      <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-red-600"></div>
+                      <p className="mt-2 text-sm">Searching...</p>
+                    </div>
+                  ) : searchResults.length > 0 ? (
+                    <>
+                      <div className="p-2 border-b border-gray-200">
+                        <p className="text-xs text-gray-500">
+                          Found {searchResults.length} result{searchResults.length !== 1 ? 's' : ''}
+                        </p>
+                      </div>
+                      <div className="max-h-80 overflow-y-auto">
+                        {searchResults.map((item) => (
+                          <div
+                            key={`${item.source}-${item._id}`}
+                            onClick={() => handleResultClick(item.link)}
+                            className="flex items-center gap-3 p-3 hover:bg-red-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                          >
+                            <div className="relative w-16 h-16 flex-shrink-0 rounded overflow-hidden bg-gray-100">
+                              <Image
+                                src={item.image || '/land1.jpg'}
+                                alt={item.name}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-semibold text-gray-900 truncate">
+                                {item.name}
+                              </p>
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded">
+                                  {item.categoryName}
+                                </span>
+                                {item.price && (
+                                  <span className="text-xs text-gray-600">
+                                    {typeof item.price === 'number' ? `${item.price}৳` : item.price}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      {searchResults.length >= 20 && (
+                        <div className="p-3 border-t border-gray-200 text-center">
+                          <button
+                            onClick={handleSearchSubmit}
+                            className="text-sm text-red-600 hover:text-red-700 font-semibold"
+                          >
+                            View all results →
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="p-4 text-center text-gray-500">
+                      <p className="text-sm">No results found for "{searchQuery}"</p>
+                      <p className="text-xs mt-1">Try different keywords</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </form>
           </div>
 
           {/* Right Actions */}
@@ -152,35 +349,41 @@ const Navbar = () => {
             {isCategoriesOpen && (
               <div className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
                 <div className="py-2">
-                  <Link 
-                    href="/land" 
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
-                    onClick={() => setIsCategoriesOpen(false)}
+                  <a 
+                    href="#land" 
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer"
+                    onClick={(e) => handleCategoryClick(e, 'land')}
                   >
                     Land
-                  </Link>
-                  <Link 
-                    href="/real-estate" 
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
-                    onClick={() => setIsCategoriesOpen(false)}
+                  </a>
+                  <a 
+                    href="#real-estate" 
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer"
+                    onClick={(e) => handleCategoryClick(e, 'real-estate')}
                   >
                     Real Estate
-                  </Link>
-                  <Link 
-                    href="/interior" 
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
-                    onClick={() => setIsCategoriesOpen(false)}
+                  </a>
+                  <a 
+                    href="#interior" 
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer"
+                    onClick={(e) => handleCategoryClick(e, 'interior')}
                   >
                     Interior
-                  </Link>
-                  <Link 
-                    href="/marvel" 
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
-                    onClick={() => setIsCategoriesOpen(false)}
+                  </a>
+                  <a 
+                    href="#marble" 
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer"
+                    onClick={(e) => handleCategoryClick(e, 'marble')}
                   >
-                    Marvel & Sanitary
-                  </Link>
-
+                    Marble
+                  </a>
+                  <a 
+                    href="#sanitary" 
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer"
+                    onClick={(e) => handleCategoryClick(e, 'sanitary')}
+                  >
+                    Sanitary
+                  </a>
                 </div>
               </div>
             )}

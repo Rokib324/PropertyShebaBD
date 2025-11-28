@@ -16,11 +16,21 @@ export default function Home() {
       <Navbar />
       <HeroSlider />
       <Categories />
-      <RealEstate />
-      <LandCard />
-      <Interior />
-      <Marble />
-      <Sanitary />
+      <section id="real-estate">
+        <RealEstate />
+      </section>
+      <section id="land">
+        <LandCard />
+      </section>
+      <section id="interior">
+        <Interior />
+      </section>
+      <section id="marble">
+        <Marble />
+      </section>
+      <section id="sanitary">
+        <Sanitary />
+      </section>
       <ShowAllCategories />
       <SpecialOffer />
       <WhyUs />
