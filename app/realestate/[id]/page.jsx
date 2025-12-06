@@ -13,7 +13,7 @@ const page = ({params}) => {
     const [data, setData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const contactPhone = process.env.NEXT_PUBLIC_CONTACT_PHONE || '+880 1745-525181';
+    const contactPhone = process.env.NEXT_PUBLIC_CONTACT_PHONE || '+8801704861100';
 
     const fetchPropertyData = async () => {
         try {

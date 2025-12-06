@@ -87,7 +87,7 @@ const Footer = () => {
         {/* Social Media Icons */}
         <div className="flex justify-center space-x-4 mt-8 pt-6 border-t border-red-500">
           <a 
-            href="https://facebook.com" 
+            href="https://www.facebook.com/profile.php?id=61579345130718&rdid=j9IpUgYelZa2lOG7&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1C2KEDX38s%2F%3Fref%3D1#" 
             target="_blank" 
             rel="noopener noreferrer"
             className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors duration-300"
@@ -119,7 +119,7 @@ const Footer = () => {
             <FaYoutube className="text-white text-sm" />
           </a>
           <a 
-            href="https://wa.me/+8801745525181" 
+            href="https://wa.me/+8801704861100" 
             target="_blank" 
             rel="noopener noreferrer"
             className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center hover:bg-green-600 transition-colors duration-300"
@@ -150,9 +150,9 @@ const Footer = () => {
       </div>
 
       {/* Floating WhatsApp Button */}
-      <div className="fixed top-1/2 -translate-y-1/2 right-6 z-50">
+      <div className="fixed top-2/3 -translate-y-2/3 right-6 z-50">
         <a 
-          href="https://wa.me/+8801745525181?text=Hello%20Property%20Sheba%20BD,%20I%20am%20interested%20in%20your%20services"
+          href="https://wa.me/+8801704861100?text=Hello%20Property%20Sheba%20BD,%20I%20am%20interested%20in%20your%20services"
           target="_blank"
           rel="noopener noreferrer"
           className="relative group"
