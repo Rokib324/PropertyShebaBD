@@ -1,31 +1,13 @@
 import connectDB from "@/lib/config/db"
 import InterirorModel from "@/lib/models/InterirorModel";
-import mongoose from "mongoose";
 import { writeFile } from "fs/promises";
 import { NextResponse } from "next/server";
-
-// Connect to the database
-const LoadDB = async () => {
-    try {
-        await connectDB();
-    } catch (error) {
-        console.error('Database connection error:', error);
-    }
-}
-LoadDB();
-
-// Helper function to ensure DB is connected
-const ensureDBConnection = async () => {
-    if (mongoose.connection.readyState !== 1) {
-        await connectDB();
-    }
-};
 
 // Api endpoint for getting all interiors or a specific interior by ID
 async function GET(request) {
     try {
         // Ensure database is connected
-        await ensureDBConnection();
+        await connectDB();
         
         const { searchParams } = new URL(request.url);
         const id = searchParams.get('id');
@@ -55,7 +37,7 @@ async function GET(request) {
 async function POST(request) {
     try {
         // Ensure database is connected
-        await ensureDBConnection();
+        await connectDB();
         
         const formData = await request.formData();
         const timestamp = Date.now();
@@ -106,7 +88,7 @@ async function POST(request) {
 async function DELETE(request) {
     try {
         // Ensure database is connected
-        await ensureDBConnection();
+        await connectDB();
         
         const id = request.nextUrl.searchParams.get('id');
         await InterirorModel.findByIdAndDelete(id);

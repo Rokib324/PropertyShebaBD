@@ -5,32 +5,42 @@ import { writeFile } from "fs/promises";
 import { NextResponse } from "next/server";
 
 
-// Connect to the database
-const LoadDB = async () => {
-    await connectDB()
-}
-LoadDB();
 // Api endpoint for getting all properties or a specific property by ID
 async function GET(request) {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
-    
-    if (id) {
-        // Get specific property by ID
-        const property = await PropertyModel.findById(id);
-        if (!property) {
-            return NextResponse.json({ success: false, message: "Property not found" }, { status: 404 });
+    try {
+        // Ensure database is connected
+        await connectDB();
+        
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get('id');
+        
+        if (id) {
+            // Get specific property by ID
+            const property = await PropertyModel.findById(id);
+            if (!property) {
+                return NextResponse.json({ success: false, message: "Property not found" }, { status: 404 });
+            }
+            return NextResponse.json({ success: true, property: property });
+        } else {
+            // Get all properties
+            const properties = await PropertyModel.find();
+            return NextResponse.json({ success: true, properties: properties });
         }
-        return NextResponse.json({ success: true, property: property });
-    } else {
-        // Get all properties
-        const properties = await PropertyModel.find();
-        return NextResponse.json({ success: true, properties: properties });
+    } catch (error) {
+        console.error('Error fetching properties:', error);
+        return NextResponse.json({ 
+            success: false, 
+            message: error.message || "Error fetching properties"
+        }, { status: 500 });
     }
 }
 
 async function POST(request) {
-    const formData = await request.formData();
+    try {
+        // Ensure database is connected
+        await connectDB();
+        
+        const formData = await request.formData();
     const timestamp = Date.now();
     
     // Handle image upload to public folder
@@ -53,17 +63,31 @@ async function POST(request) {
         type: `${formData.get('type')}`,
         createdAt: new Date(timestamp)  
     }
-    await PropertyModel.create(propertydata);
-    return NextResponse.json({success: true, message: "Property uploaded successfully!"})
+        await PropertyModel.create(propertydata);
+        return NextResponse.json({success: true, message: "Property uploaded successfully!"});
+    } catch (error) {
+        console.error('Error creating property:', error);
+        return NextResponse.json({success: false, message: "Error uploading property"}, {status: 500});
+    }
 }
 
 // API endpoint to delete a property
 async function DELETE(request) {
-    const propertyId = await request.nextUrl.searchParams.get('id');
-    const property = await PropertyModel.findById(propertyId);
-    fs.unlink(`./public/${property.image}`,()=>{});
-    await PropertyModel.findByIdAndDelete(propertyId);
-    return NextResponse.json({success: true, message: "Property deleted successfully"})
+    try {
+        // Ensure database is connected
+        await connectDB();
+        
+        const propertyId = await request.nextUrl.searchParams.get('id');
+        const property = await PropertyModel.findById(propertyId);
+        if (property && property.image) {
+            fs.unlink(`./public/${property.image}`,()=>{});
+        }
+        await PropertyModel.findByIdAndDelete(propertyId);
+        return NextResponse.json({success: true, message: "Property deleted successfully"});
+    } catch (error) {
+        console.error('Error deleting property:', error);
+        return NextResponse.json({success: false, message: "Error deleting property"}, {status: 500});
+    }
 }
 
 

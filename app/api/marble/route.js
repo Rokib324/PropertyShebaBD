@@ -4,14 +4,12 @@ import { writeFile } from "fs/promises";
 import { NextResponse } from "next/server";
 
 
-// Connect to the database
-const LoadDB = async () => {
-    await connectDB()
-}
-LoadDB();
 // Api endpoint for getting all marbles or a specific marble by ID
 async function GET(request) {
     try {
+        // Ensure database is connected
+        await connectDB();
+        
         const { searchParams } = new URL(request.url);
         const id = searchParams.get('id');
         
@@ -37,7 +35,11 @@ async function GET(request) {
 }
 
 async function POST(request) {
-    const formData = await request.formData();
+    try {
+        // Ensure database is connected
+        await connectDB();
+        
+        const formData = await request.formData();
     const timestamp = Date.now();
     
     // Handle image upload to public folder
@@ -66,16 +68,27 @@ async function POST(request) {
         features: formData.get('features') ? formData.get('features').split(',') : [],
         
     }
-    await MarbleModel.create(marbledata);
-    console.log("Marble saved")
-    return NextResponse.json({success: true, message: "Marble uploaded successfully!"})
-
+        await MarbleModel.create(marbledata);
+        console.log("Marble saved");
+        return NextResponse.json({success: true, message: "Marble uploaded successfully!"});
+    } catch (error) {
+        console.error('Error creating marble:', error);
+        return NextResponse.json({success: false, message: "Error uploading marble"}, {status: 500});
+    }
 }
 
 async function DELETE(request) {
-    const id = request.nextUrl.searchParams.get('id');
-    await MarbleModel.findByIdAndDelete(id);
-    return NextResponse.json({success: true, message: "Marble deleted successfully!"})
+    try {
+        // Ensure database is connected
+        await connectDB();
+        
+        const id = request.nextUrl.searchParams.get('id');
+        await MarbleModel.findByIdAndDelete(id);
+        return NextResponse.json({success: true, message: "Marble deleted successfully!"});
+    } catch (error) {
+        console.error('Error deleting marble:', error);
+        return NextResponse.json({success: false, message: "Error deleting marble"}, {status: 500});
+    }
 }
 
 

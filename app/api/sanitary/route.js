@@ -3,14 +3,12 @@ import SanitaryModel from "@/lib/models/SanitaryModel";
 import { writeFile } from "fs/promises";
 import { NextResponse } from "next/server";
 
-// Connect to the database
-const LoadDB = async () => {
-    await connectDB()
-}
-LoadDB();
 // Api endpoint for getting all sanitary items or a specific sanitary item by ID
 async function GET(request) {
     try {
+        // Ensure database is connected
+        await connectDB();
+        
         const { searchParams } = new URL(request.url);
         const id = searchParams.get('id');
         
@@ -36,7 +34,11 @@ async function GET(request) {
 }
 
 async function POST(request) {
-    const formData = await request.formData();
+    try {
+        // Ensure database is connected
+        await connectDB();
+        
+        const formData = await request.formData();
     const timestamp = Date.now();
     const image = formData.get('image');
     const imageByteData = await image.arrayBuffer();
@@ -59,16 +61,27 @@ async function POST(request) {
         isAvailable: `${formData.get('isAvailable')}`,
         image: `${imgUrl}`,
     }
-    await SanitaryModel.create(sanitarydata);
-    return NextResponse.json({ success: true, message: "Sanitary item uploaded successfully!" });
+        await SanitaryModel.create(sanitarydata);
+        return NextResponse.json({ success: true, message: "Sanitary item uploaded successfully!" });
+    } catch (error) {
+        console.error('Error creating sanitary item:', error);
+        return NextResponse.json({success: false, message: "Error uploading sanitary item"}, {status: 500});
+    }
 }
 
 
 async function DELETE(request) {
-    const formData = await request.formData();
-    const id = formData.get('id');
-    await SanitaryModel.findByIdAndDelete(id);
-    return NextResponse.json({ success: true, message: "Sanitary item deleted successfully!" });
+    try {
+        // Ensure database is connected
+        await connectDB();
+        
+        const id = request.nextUrl.searchParams.get('id');
+        await SanitaryModel.findByIdAndDelete(id);
+        return NextResponse.json({ success: true, message: "Sanitary item deleted successfully!" });
+    } catch (error) {
+        console.error('Error deleting sanitary item:', error);
+        return NextResponse.json({success: false, message: "Error deleting sanitary item"}, {status: 500});
+    }
 }   
 
 export { GET, POST, DELETE };

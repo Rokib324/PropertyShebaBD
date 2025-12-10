@@ -4,24 +4,11 @@ import LandModel from "@/lib/models/LandModel";
 import MarbleModel from "@/lib/models/MarbleModel";
 import SanitaryModel from "@/lib/models/SanitaryModel";
 import PropertyModel from "@/lib/models/PropertyModel";
-import mongoose from "mongoose";
 import { NextResponse } from "next/server";
-
-// Connect to the database
-const LoadDB = async () => {
-    try {
-        await connectDB();
-    } catch (error) {
-        console.error('Database connection error:', error);
-    }
-}
-LoadDB();
 
 // Helper function to ensure DB is connected
 const ensureDBConnection = async () => {
-    if (mongoose.connection.readyState !== 1) {
-        await connectDB();
-    }
+    await connectDB();
 };
 
 // Api endpoint for getting all categories gallery or a specific category by ID

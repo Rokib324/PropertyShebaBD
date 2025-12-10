@@ -6,32 +6,41 @@ import { writeFile } from "fs/promises";
 import { NextResponse } from "next/server";
 
 
-// Connect to the database
-const LoadDB = async () => {
-    await connectDB()
-}
-LoadDB();
 // Api endpoint for getting all lands or a specific land by ID
 async function GET(request) {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
-    
-    if (id) {
-        // Get specific land by ID
-        const land = await LandModel.findById(id);
-        if (!land) {
-            return NextResponse.json({ success: false, message: "Land not found" }, { status: 404 });
+    try {
+        // Ensure database is connected
+        await connectDB();
+        
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get('id');
+        
+        if (id) {
+            // Get specific land by ID
+            const land = await LandModel.findById(id);
+            if (!land) {
+                return NextResponse.json({ success: false, message: "Land not found" }, { status: 404 });
+            }
+            return NextResponse.json({ success: true, land: land });
+        } else {
+            // Get all lands
+            const lands = await LandModel.find();
+            return NextResponse.json({ success: true, lands: lands });
         }
-        return NextResponse.json({ success: true, land: land });
-    } else {
-        // Get all lands
-        const lands = await LandModel.find();
-        return NextResponse.json({ success: true, lands: lands });
+    } catch (error) {
+        console.error('Error fetching lands:', error);
+        return NextResponse.json({ 
+            success: false, 
+            message: error.message || "Error fetching lands"
+        }, { status: 500 });
     }
 }
 
 async function POST(request) {
     try {
+        // Ensure database is connected
+        await connectDB();
+        
         const formData = await request.formData();
         const timestamp = Date.now();
         
@@ -86,11 +95,21 @@ async function POST(request) {
 
 // API endpoint to delete a land
 async function DELETE(request) {
-    const landId = await request.nextUrl.searchParams.get('id');
-    const land = await LandModel.findById(landId);
-    fs.unlink(`./public/${land.images[0]}`,()=>{});
-    await LandModel.findByIdAndDelete(landId);
-    return NextResponse.json({success: true, message: "Land deleted successfully"})
+    try {
+        // Ensure database is connected
+        await connectDB();
+        
+        const landId = await request.nextUrl.searchParams.get('id');
+        const land = await LandModel.findById(landId);
+        if (land && land.images && land.images[0]) {
+            fs.unlink(`./public/${land.images[0]}`,()=>{});
+        }
+        await LandModel.findByIdAndDelete(landId);
+        return NextResponse.json({success: true, message: "Land deleted successfully"});
+    } catch (error) {
+        console.error('Error deleting land:', error);
+        return NextResponse.json({success: false, message: "Error deleting land"}, {status: 500});
+    }
 }
 
 
