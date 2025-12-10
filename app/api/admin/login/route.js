@@ -3,19 +3,12 @@ import AdminModel from "@/lib/models/AdminModel"
 import { NextResponse } from "next/server"
 import bcrypt from 'bcrypt'
 
-// Connect to the database
-const LoadDB = async () => {
-    try {
-        await connectDB();
-    } catch (error) {
-        console.error('Database connection error:', error);
-    }
-}
-LoadDB();
-
 // POST - Admin login
 async function POST(request) {
     try {
+        // Ensure database is connected
+        await connectDB();
+        
         const { username, password } = await request.json();
 
         if (!username || !password) {
