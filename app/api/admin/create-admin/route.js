@@ -1,4 +1,17 @@
+import connectDB from "@/lib/config/db";
+import AdminModel from "@/lib/models/AdminModel";
+import { NextResponse } from "next/server";
 import bcrypt from 'bcrypt';
+
+// Connect to the database
+const LoadDB = async () => {
+    try {
+        await connectDB();
+    } catch (error) {
+        console.error('Database connection error:', error);
+    }
+}
+LoadDB();
 
 const hashPassword = async (password) => {
     const saltRounds = 10;
@@ -80,3 +93,5 @@ async function POST(request) {
         );
     }
 }
+
+export { POST };

@@ -1,7 +1,7 @@
 import connectDB from "@/lib/config/db"
 import AdminModel from "@/lib/models/AdminModel"
 import { NextResponse } from "next/server"
-import crypto from "crypto"
+import bcrypt from 'bcrypt'
 
 // Connect to the database
 const LoadDB = async () => {
@@ -12,11 +12,6 @@ const LoadDB = async () => {
     }
 }
 LoadDB();
-
-// Helper function to hash password
-const hashPassword = (password) => {
-    return crypto.createHash('sha256').update(password).digest('hex');
-}
 
 // POST - Admin login
 async function POST(request) {
@@ -40,10 +35,10 @@ async function POST(request) {
             );
         }
 
-        // Hash the provided password and compare
-        const hashedPassword = hashPassword(password);
+        // Compare the provided password with the stored bcrypt hash
+        const isPasswordValid = await bcrypt.compare(password, admin.password);
         
-        if (admin.password !== hashedPassword) {
+        if (!isPasswordValid) {
             return NextResponse.json(
                 { success: false, message: "Invalid credentials" },
                 { status: 401 }
