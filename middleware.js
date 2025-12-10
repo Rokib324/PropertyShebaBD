@@ -1,58 +1,58 @@
 import { NextResponse } from 'next/server'
 
+// Helper function to verify admin token
+const verifyAdminToken = (token) => {
+  if (!token) return null;
+  try {
+    const decoded = JSON.parse(Buffer.from(token, 'base64').toString());
+    if (Date.now() > decoded.expiry) return null;
+    return decoded;
+  } catch {
+    return null;
+  }
+}
+
 export function middleware(request) {
   const { pathname } = request.nextUrl
   
-  // Protect admin routes (exclude login)
+  // Protect admin pages (exclude login page)
   if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
     const token = request.cookies.get('admin-token')?.value
+    const admin = verifyAdminToken(token)
     
-    if (!token) {
+    if (!admin) {
       return NextResponse.redirect(new URL('/admin/login', request.url))
     }
-    
-    try {
-      const decoded = JSON.parse(Buffer.from(token, 'base64').toString())
-      if (Date.now() > decoded.expiry) {
-        // Token expired, clear cookie and redirect
-        const response = NextResponse.redirect(new URL('/admin/login', request.url))
-        response.cookies.delete('admin-token')
-        return response
-      }
-    } catch {
-      // Invalid token, clear cookie and redirect
+
+    // Clear expired token and redirect
+    if (!admin) {
       const response = NextResponse.redirect(new URL('/admin/login', request.url))
       response.cookies.delete('admin-token')
       return response
     }
   }
 
-  // Protect admin API routes (exclude login and create-admin)
+  // Protect admin API routes (exclude auth routes: login, logout, register)
   if (pathname.startsWith('/api/admin') && 
       pathname !== '/api/admin/login' && 
       pathname !== '/api/admin/logout' &&
-      pathname !== '/api/admin/create-admin') {
+      pathname !== '/api/admin/register') {
     const token = request.cookies.get('admin-token')?.value
+    const admin = verifyAdminToken(token)
     
-    if (!token) {
+    if (!admin) {
       return NextResponse.json(
-        { success: false, message: 'Unauthorized' },
+        { success: false, message: 'Unauthorized. Please login.' },
         { status: 401 }
       )
     }
-    
-    try {
-      const decoded = JSON.parse(Buffer.from(token, 'base64').toString())
-      if (Date.now() > decoded.expiry) {
-        return NextResponse.json(
-          { success: false, message: 'Token expired' },
-          { status: 401 }
-        )
-      }
-    } catch {
+
+    // Super admin only routes
+    const superAdminOnlyRoutes = ['/api/admin/register'];
+    if (superAdminOnlyRoutes.some(route => pathname.startsWith(route)) && admin.role !== 'super_admin') {
       return NextResponse.json(
-        { success: false, message: 'Invalid token' },
-        { status: 401 }
+        { success: false, message: 'Forbidden. Super admin access required.' },
+        { status: 403 }
       )
     }
   }
@@ -71,25 +71,11 @@ export function middleware(request) {
   
   if (isProtectedRoute && ['POST', 'PUT', 'DELETE', 'PATCH'].includes(request.method)) {
     const token = request.cookies.get('admin-token')?.value
+    const admin = verifyAdminToken(token)
     
-    if (!token) {
+    if (!admin) {
       return NextResponse.json(
         { success: false, message: 'Unauthorized. Admin access required.' },
-        { status: 401 }
-      )
-    }
-    
-    try {
-      const decoded = JSON.parse(Buffer.from(token, 'base64').toString())
-      if (Date.now() > decoded.expiry) {
-        return NextResponse.json(
-          { success: false, message: 'Token expired' },
-          { status: 401 }
-        )
-      }
-    } catch {
-      return NextResponse.json(
-        { success: false, message: 'Invalid token' },
         { status: 401 }
       )
     }
