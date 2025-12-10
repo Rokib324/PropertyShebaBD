@@ -6,13 +6,50 @@
 
 const { createServer } = require("http");
 const { parse } = require("url");
-const next = require("next");
+const fs = require("fs");
+const path = require("path");
+
+// Check if Next.js is installed
+let next;
+try {
+  next = require("next");
+} catch (err) {
+  console.error("=".repeat(60));
+  console.error("❌ ERROR: Next.js module not found!");
+  console.error("=".repeat(60));
+  console.error("\n📋 SOLUTION:");
+  console.error("   1. Make sure you're in the project directory");
+  console.error("   2. Run: npm install");
+  console.error("   3. Wait for installation to complete");
+  console.error("   4. Then run: npm run build");
+  console.error("   5. Finally run: npm start");
+  console.error("\n💡 If node_modules exists but still shows this error,");
+  console.error("   delete node_modules and package-lock.json, then run npm install again");
+  console.error("=".repeat(60));
+  process.exit(1);
+}
 
 // cPanel provides PORT via environment variable (Node.js Selector)
 const port = parseInt(process.env.PORT || process.env.NODE_PORT || "3000", 10);
 const dev = process.env.NODE_ENV !== "production";
 
+// Check if .next directory exists (production build)
+const nextDir = path.join(process.cwd(), ".next");
+if (!dev && !fs.existsSync(nextDir)) {
+  console.error("=".repeat(60));
+  console.error("❌ ERROR: Production build not found!");
+  console.error("=".repeat(60));
+  console.error("\n📋 SOLUTION:");
+  console.error("   1. Run: npm run build");
+  console.error("   2. Wait for build to complete");
+  console.error("   3. Then run: npm start");
+  console.error("\n💡 The '.next' directory must exist for production mode");
+  console.error("=".repeat(60));
+  process.exit(1);
+}
+
 // Initialize Next.js app
+// In production mode (dev=false), turbopack is automatically disabled
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
