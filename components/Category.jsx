@@ -44,27 +44,42 @@ const Categories = () => {
   const settings = {
     dots: true,
     infinite: true,
-    slidesToShow: 4,          // desktop
+    slidesToShow: 4,  // Default for extra large screens (1280px+)
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 3000,
     pauseOnHover: true,
+    arrows: true,
     responsive: [
       {
-        breakpoint: 1280,     // large laptops
-        settings: { slidesToShow: 3 },
+        breakpoint: 1280,  // When screen < 1280px
+        settings: { 
+          slidesToShow: 3,
+          arrows: true,
+        },
       },
       {
-        breakpoint: 1024,     // tablets landscape
-        settings: { slidesToShow: 3 },
+        breakpoint: 1024,  // When screen < 1024px
+        settings: { 
+          slidesToShow: 2,
+          arrows: true,
+        },
       },
       {
-        breakpoint: 768,      // tablets / big phones
-        settings: { slidesToShow: 2 },
+        breakpoint: 768,  // When screen < 768px (Mobile)
+        settings: { 
+          slidesToShow: 1,  // Show 1 category on mobile
+          arrows: false,  // Hide arrows on mobile for cleaner look
+          dots: true,
+        },
       },
       {
-        breakpoint: 480,      // small phones
-        settings: { slidesToShow: 1 },
+        breakpoint: 480,  // When screen < 480px (Small mobile)
+        settings: { 
+          slidesToShow: 1,  // Ensure 1 category on small mobile
+          arrows: false,
+          dots: true,
+        },
       },
     ],
   };
@@ -75,7 +90,7 @@ const Categories = () => {
         {/* Title */}
         <div className="text-center mb-8 sm:mb-10 md:mb-12">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-black mb-4">
-            WHAT WE DO
+            Our Services
           </h2>
           <div className="flex items-center justify-center">
             <div className="w-12 sm:w-16 h-1 bg-red-600 rounded-full"></div>
@@ -85,33 +100,35 @@ const Categories = () => {
         </div>
 
         {/* Slider */}
-        <Slider {...settings}>
-          {categories.map((category) => (
-            <div key={category.id} className="px-2 sm:px-3 md:px-4">
-              <Link href={`#${category.targetId}`} className="block group">
-                <div className="flex flex-col items-center">
-                  {/* Circular Image */}
-                  <div className="relative mb-4 group-hover:scale-105 transition-transform duration-300
-                                  w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48">
-                    <div className="w-full h-full rounded-full overflow-hidden border-4 border-gray-200 group-hover:border-red-500 transition-colors duration-300">
-                      <Image
-                        src={category.image}
-                        alt={category.name}
-                        fill
-                        className="object-cover"
-                      />
+        <div className="w-full overflow-hidden">
+          <Slider {...settings}>
+            {categories.map((category) => (
+              <div key={category.id} className="px-3 sm:px-4 md:px-5">
+                <Link href={`#${category.targetId}`} className="block group">
+                  <div className="flex flex-col items-center">
+                    {/* Circular Image */}
+                    <div className="relative mb-3 sm:mb-4 w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 lg:w-48 lg:h-48 mx-auto">
+                      <div className="w-full h-full rounded-full overflow-hidden border-2 border-gray-200 shadow-md">
+                        <Image
+                          src={category.image}
+                          alt={category.name}
+                          width={200}
+                          height={200}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Category Name */}
-                  <h3 className="text-xs sm:text-sm md:text-base font-bold text-black uppercase text-center group-hover:text-red-600 transition-colors duration-300">
-                    {category.name}
-                  </h3>
-                </div>
-              </Link>
-            </div>
-          ))}
-        </Slider>
+                    {/* Category Name */}
+                    <h3 className="text-sm sm:text-base md:text-lg font-bold text-black uppercase text-center group-hover:text-red-600 transition-colors duration-300 px-2">
+                      {category.name}
+                    </h3>
+                  </div>
+                </Link>
+              </div>
+            ))}
+          </Slider>
+        </div>
       </div>
     </div>
   );

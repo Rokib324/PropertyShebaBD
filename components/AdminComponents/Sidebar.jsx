@@ -27,7 +27,7 @@ const SideBar = () => {
       <div className='px-2 sm:pl-14 py-3'>
         <Image src={assets.logo} alt='logo' width={50}/>
       </div>
-      <div className='w-28 sm:w-80 h-[100vh] relative py-12 border border-black'>
+      <div className='w-28 sm:w-80 h-screen relative py-12 border border-black'>
         <div className='w-[50%] sm:w-[80%] absolute right-0'>
         <Link href='/admin/add_slider' className='font-semibold flex items-center gap-2 py-1 px-3 sm:px-6 border border-solid border-black shadow-[-5px_5px_0px_#494949] hover:shadow-[-5px_5px_0px_#FF0000] transition-all duration-300'>
           <Image src={assets.add_icon} alt='' width={28}/> <p>Add Slider</p>

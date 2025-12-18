@@ -35,8 +35,7 @@ const Footer = () => {
             <div className="flex items-start space-x-3">
               <FaMapMarkerAlt className="text-white mt-1 flex-shrink-0" />
               <p className="text-sm leading-relaxed">
-                Hazi Fosi Uddin Super Market, Front of star Cinema hall,<br />
-                Nawabganj Road, Birampur, Dinajpur
+                H-219/A/2, Tejkunipara,Tejgaon,Dhaka -1215
               </p>
             </div>
             
@@ -52,7 +51,7 @@ const Footer = () => {
             <div className="flex items-center space-x-3">
               <FaEnvelope className="text-white" />
               <a href="mailto:infodeshwear@gmail.com" className="text-sm hover:underline">
-                info@kingspropertybd.com
+                propertyshebabd@gmail.com
               </a>
             </div>
           </div>
@@ -61,13 +60,13 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold mb-4">Company</h3>
             <div className="space-y-2">
-              <Link href="/about" className="block text-sm hover:underline">
+              <Link href="#" className="block text-sm hover:underline">
                 About us
               </Link>
-              <Link href="/privacy" className="block text-sm hover:underline">
+              <Link href="#" className="block text-sm hover:underline">
                 Privacy & Policy
               </Link>
-              <Link href="/outlets" className="block text-sm hover:underline">
+              <Link href="#" className="block text-sm hover:underline">
                 Find our outlet
               </Link>
             </div>
@@ -95,7 +94,7 @@ const Footer = () => {
             <FaFacebookF className="text-white text-sm" />
           </a>
           <a 
-            href="https://twitter.com" 
+            href="#" 
             target="_blank" 
             rel="noopener noreferrer"
             className="w-10 h-10 bg-black rounded-full flex items-center justify-center hover:bg-gray-800 transition-colors duration-300"

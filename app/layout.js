@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "Property Sheba BD",
-  description: "Property Sheba BD is a property management company that provides a wide range of services to its clients. We are a team of experienced professionals who are dedicated to providing the best possible service to our clients.",
+  description: "Property Sheba Bd is a trusted digital platform designed to connect Bangladeshi property owners with reliable clients, By simplifying communication and streamlining processes, we ensure hassle-free management of apartments, offices, and land properties.",
 };
 
 export default function RootLayout({ children }) {
