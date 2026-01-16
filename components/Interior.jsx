@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import axios from 'axios';
+import { normalizeImageUrl } from '@/lib/utils/imageUtils';
 
 const Interior = () => {
   const [interiors, setInteriors] = useState([]);
@@ -68,7 +69,7 @@ const Interior = () => {
                   {/* Interior Image */}
                   <div className="relative h-64 w-full">
                     <Image
-                      src={interior.image || "/int1.jpg"}
+                      src={normalizeImageUrl(interior.image || "/int1.jpg")}
                       alt={interior.title}
                       fill
                       className="object-cover"

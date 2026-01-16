@@ -6,6 +6,7 @@ import Footer from '@/components/Footer'
 import Navbar from '@/components/Navbar'
 import Link from 'next/link'
 import axios from 'axios'
+import { normalizeImageUrl } from '@/lib/utils/imageUtils'
 
 const page = ({params}) => {
     const resolvedParams = use(params);
@@ -44,7 +45,7 @@ const page = ({params}) => {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+            <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                 <div className="text-center">
                     <div className="relative">
                         <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-red-600 mx-auto mb-6"></div>
@@ -61,7 +62,7 @@ const page = ({params}) => {
 
     if (error) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+            <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                 <div className="text-center max-w-md mx-auto px-6">
                     <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <svg className="w-12 h-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -88,7 +89,7 @@ const page = ({params}) => {
 
     if (!data) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+            <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                 <div className="text-center max-w-md mx-auto px-6">
                     <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,7 +107,7 @@ const page = ({params}) => {
     }
 
     // Get the first image or a placeholder
-    const landImage = data.images && data.images.length > 0 ? data.images[0] : '/placeholder-land.jpg';
+    const landImage = normalizeImageUrl(data.images && data.images.length > 0 ? data.images[0] : '/placeholder-land.jpg');
     const locationDisplay = `${data.address || ''}${data.city ? ', ' + data.city : ''}${data.district ? ', ' + data.district : ''}${data.country ? ', ' + data.country : ''}`.trim();
 
     // Format land type for display
@@ -116,7 +117,7 @@ const page = ({params}) => {
     }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
         {/* Navbar */}
         <Navbar />
 
@@ -133,7 +134,7 @@ const page = ({params}) => {
                     />
                 
                     {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                    <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent"></div>
                     
                     {/* Featured Badge */}
                     {data.is_featured && (
@@ -219,7 +220,7 @@ const page = ({params}) => {
                     </div>
 
                     {/* Contact Agent Section */}
-                    <div className="bg-gradient-to-r from-red-600 to-red-700 rounded-xl sm:rounded-2xl shadow-xl p-6 sm:p-8 text-white">
+                    <div className="bg-linear-to-r from-red-600 to-red-700 rounded-xl sm:rounded-2xl shadow-xl p-6 sm:p-8 text-white">
                         <div className="flex flex-col md:flex-row items-center justify-between">
                             <div className="mb-4 sm:mb-6 md:mb-0 text-center md:text-left">
                                 <h3 className="text-xl sm:text-2xl font-bold mb-2">Interested in this land?</h3>

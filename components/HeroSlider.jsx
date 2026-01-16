@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import axios from 'axios';
+import { normalizeImageUrl } from '@/lib/utils/imageUtils';
 
 const HeroSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -55,12 +56,11 @@ const HeroSlider = () => {
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
-          src={currentSlideData.image}
+          src={normalizeImageUrl(currentSlideData.image)}
           alt={currentSlideData.title}
           fill
           className="object-cover"
           priority={currentSlide === 0}
-
         />
         {/* Dark overlay for better text readability */}
         <div className="absolute inset-0 bg-black/20"></div>

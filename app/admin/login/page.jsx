@@ -20,17 +20,26 @@ const LoginPage = () => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const response = await axios.get('/api/admin/login');
-                if (response.data.success && response.data.authenticated) {
+                const response = await axios.get('/api/admin/login', {
+                    timeout: 5000 // 5 second timeout
+                });
+                if (response.data?.success && response.data?.authenticated) {
                     router.push('/admin');
+                } else {
+                    setIsCheckingAuth(false);
                 }
             } catch (error) {
-                // Not authenticated, stay on login page
-            } finally {
+                // Not authenticated or API error, stay on login page
+                // This is expected if user is not logged in
                 setIsCheckingAuth(false);
             }
         };
-        checkAuth();
+        // Only check auth on client side
+        if (typeof window !== 'undefined') {
+            checkAuth();
+        } else {
+            setIsCheckingAuth(false);
+        }
     }, [router]);
 
     const handleSubmit = async (e) => {
@@ -64,7 +73,7 @@ const LoginPage = () => {
 
     if (isCheckingAuth) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+            <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                 <div className="text-center">
                     <div className="relative">
                         <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-red-600 mx-auto mb-6"></div>
@@ -79,12 +88,19 @@ const LoginPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">
                 {/* Logo and Title */}
                 <div className="text-center">
                     <div className="flex justify-center mb-6">
-                        <Image src={assets.logo} alt="Property Sheba BD" width={180} height={60} />
+                        <Image 
+                            src={assets.logo} 
+                            alt="Property Sheba BD" 
+                            width={180} 
+                            height={60}
+                            priority
+                            unoptimized
+                        />
                     </div>
                     <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Admin Login</h2>
                     <p className="text-gray-600">Enter your credentials to access the admin panel</p>

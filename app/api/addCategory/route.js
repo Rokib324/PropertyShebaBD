@@ -1,22 +1,22 @@
 import connectDB from "@/lib/config/db"
-import SliderModel from "@/lib/models/SliderModel";
+import AddCategoryModel from "@/lib/models/AddCategoriesModel";
 import { writeFile } from "fs/promises";
 import { NextResponse } from "next/server";
 
 
-// Api endpoint for getting all sliders
+// Api endpoint for getting all categories
 async function GET(request) {
     try {
         // Ensure database is connected
         await connectDB();
         
-        const slides = await SliderModel.find();
+        const slides = await AddCategoryModel.find();
         return NextResponse.json({ success: true, slides: slides });
     } catch (error) {
-        console.error('Error fetching sliders:', error);
+        console.error('Error fetching categories:', error);
         return NextResponse.json({ 
             success: false, 
-            message: error.message || "Error fetching sliders"
+            message: error.message || "Error fetching categories"
         }, { status: 500 });
     }
 }
@@ -37,19 +37,18 @@ async function POST(request) {
     await writeFile(path,buffer);
     const imgUrl = `/api/uploads/${timestamp}_${image.name}`;
 
-    // Create a new blog
-    const sliderdata = {
+    // Create a new category
+    const addCategorydata = {
         title: `${formData.get('title')}`,
-        description: `${formData.get('description')}`,
         image: `${imgUrl}`,
         date: `${timestamp}`
     }
-        await SliderModel.create(sliderdata);
-        console.log("Slider saved");
-        return NextResponse.json({success: true, message: "Slider uploaded successfully!"});
+        await AddCategoryModel.create(addCategorydata);
+        console.log("Category saved");
+        return NextResponse.json({success: true, message: "Category uploaded successfully!"});
     } catch (error) {
-        console.error('Error creating slider:', error);
-        return NextResponse.json({success: false, message: "Error uploading slider"}, {status: 500});
+        console.error('Error creating category:', error);
+        return NextResponse.json({success: false, message: "Error uploading category"}, {status: 500});
     }
 }
 
@@ -59,11 +58,11 @@ async function DELETE(request) {
         await connectDB();
         
         const id = request.nextUrl.searchParams.get('id');
-        await SliderModel.findByIdAndDelete(id);
-        return NextResponse.json({success: true, message: "Slider deleted successfully!"});
+        await AddCategoryModel.findByIdAndDelete(id);
+        return NextResponse.json({success: true, message: "Category deleted successfully!"});
     } catch (error) {
-        console.error('Error deleting slider:', error);
-        return NextResponse.json({success: false, message: "Error deleting slider"}, {status: 500});
+        console.error('Error deleting category:', error);
+        return NextResponse.json({success: false, message: "Error deleting category"}, {status: 500});
     }
 }
 

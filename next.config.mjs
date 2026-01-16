@@ -9,7 +9,9 @@ const nextConfig = {
   
   // Ensure proper image optimization
   images: {
-    unoptimized: false,
+    // Disable optimization for API-served images to avoid issues
+    // API routes serve images directly, so optimization would fail
+    unoptimized: true,
     domains: [],
     remotePatterns: [],
   },

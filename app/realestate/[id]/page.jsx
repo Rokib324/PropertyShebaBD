@@ -7,6 +7,7 @@ import Footer from '@/components/Footer'
 import Navbar from '@/components/Navbar'
 import Link from 'next/link'
 import axios from 'axios'
+import { normalizeImageUrl } from '@/lib/utils/imageUtils'
 
 const page = ({params}) => {
     const resolvedParams = use(params);
@@ -19,19 +20,48 @@ const page = ({params}) => {
         try {
             setIsLoading(true);
             setError(null);
-            const response = await axios.get('/api/property',{
+            
+            if (!resolvedParams.id) {
+                setError('Invalid property ID');
+                setIsLoading(false);
+                return;
+            }
+            
+            const response = await axios.get('/api/property', {
                 params: {
                     id: resolvedParams.id
-                }
-            })
-            if(response.data.success){
-                setData(response.data.property)
+                },
+                timeout: 10000 // 10 second timeout
+            });
+            
+            if (response.data && response.data.success) {
+                setData(response.data.property);
             } else {
-                setError('Property not found')
+                setError(response.data?.message || 'Property not found');
             }
         } catch (error) {
-            console.error('Error fetching property:', error)
-            setError('Failed to load property details')
+            console.error('Error fetching property:', error);
+            
+            // Handle different error types
+            if (error.response) {
+                // Server responded with error status
+                const status = error.response.status;
+                const message = error.response.data?.message || 'Failed to load property details';
+                
+                if (status === 404) {
+                    setError('Property not found');
+                } else if (status === 400) {
+                    setError('Invalid property ID');
+                } else {
+                    setError(message);
+                }
+            } else if (error.request) {
+                // Request was made but no response received
+                setError('Network error. Please check your connection.');
+            } else {
+                // Something else happened
+                setError('Failed to load property details');
+            }
         } finally {
             setIsLoading(false);
         }
@@ -45,7 +75,7 @@ const page = ({params}) => {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+            <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                 <div className="text-center">
                     <div className="relative">
                         <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-red-600 mx-auto mb-6"></div>
@@ -62,7 +92,7 @@ const page = ({params}) => {
 
     if (error) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+            <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                 <div className="text-center max-w-md mx-auto px-6">
                     <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <svg className="w-12 h-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,7 +119,7 @@ const page = ({params}) => {
 
     if (!data) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+            <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                 <div className="text-center max-w-md mx-auto px-6">
                     <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,7 +137,7 @@ const page = ({params}) => {
     }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
         {/* Navbar */}
         <Navbar />
 
@@ -116,7 +146,7 @@ const page = ({params}) => {
             <div className="relative flex items-center justify-center bg-gray-100 py-4 sm:py-6 md:py-8 px-4 sm:px-6">
                 <div className="relative w-full max-w-[1200px] h-[300px] sm:h-[400px] md:h-[500px] lg:h-[700px] overflow-hidden rounded-xl sm:rounded-2xl shadow-2xl">
                     <Image 
-                        src={data.image} 
+                        src={normalizeImageUrl(data.image)} 
                         alt={data.title} 
                         fill
                         className="object-cover transition-all duration-500" 
@@ -124,7 +154,7 @@ const page = ({params}) => {
                     />
                 
                     {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                    <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent"></div>
                     
                     {/* Discount Badge */}
                     <div className="absolute top-3 left-3 sm:top-4 sm:left-4 md:top-6 md:left-6 bg-red-600 text-white px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 rounded-lg sm:rounded-xl md:rounded-2xl text-sm sm:text-base md:text-lg font-bold shadow-2xl animate-pulse">
@@ -209,7 +239,7 @@ const page = ({params}) => {
                     </div>
 
                     {/* Contact Agent Section */}
-                    <div className="bg-gradient-to-r from-red-600 to-red-700 rounded-xl sm:rounded-2xl shadow-xl p-6 sm:p-8 text-white">
+                    <div className="bg-linear-to-r from-red-600 to-red-700 rounded-xl sm:rounded-2xl shadow-xl p-6 sm:p-8 text-white">
                         <div className="flex flex-col md:flex-row items-center justify-between">
                             <div className="mb-4 sm:mb-6 md:mb-0 text-center md:text-left">
                                 <h3 className="text-xl sm:text-2xl font-bold mb-2">Interested in this property?</h3>

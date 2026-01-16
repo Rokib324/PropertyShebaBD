@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import axios from 'axios';
+import { normalizeImageUrl } from '@/lib/utils/imageUtils';
 
 const LandCard = () => {
   const [lands, setLands] = useState([]);
@@ -68,7 +69,7 @@ const LandCard = () => {
                   {/* Land Image */}
                   <div className="relative h-64 w-full">
                     <Image
-                      src={land.images?.[0] || "/land1.jpg"}
+                      src={normalizeImageUrl(land.images?.[0] || "/land1.jpg")}
                       alt={land.title}
                       fill
                       className="object-cover"

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import axios from 'axios';
+import { normalizeImageUrl } from '@/lib/utils/imageUtils';
 
 const RealEstate = () => {
   const [properties, setProperties] = useState([]);
@@ -70,7 +71,7 @@ const RealEstate = () => {
                   {/* Property Image */}
                   <div className="relative h-64 w-full">
                     <Image
-                      src={property.image}
+                      src={normalizeImageUrl(property.image)}
                       alt={property.title}
                       fill
                       className="object-cover"

@@ -1,0 +1,23 @@
+import Image from 'next/image'
+import React from 'react'
+import { normalizeImageUrl } from '@/lib/utils/imageUtils'
+
+const CategoryTableItem = ({title, image, date, deleteCategory, mongoId}) => {
+
+    const CategoryDate = new Date(date)
+
+
+  return (
+    <tr className='bg-white border-b '>
+        <th scope='row' className='px-6 py-4 font-medium text-gray-900 items-center whitespace-nowrap hidden sm:flex gap-4'>
+            <Image src={normalizeImageUrl(image || '/rokib.jpeg')} alt='category' width={100} height={100} />
+            <p>{title?title:'no title'}</p>
+        </th>
+        <td className='px-6 py-4'>{CategoryDate.toDateString()}</td>
+        <td onClick={() => deleteCategory(mongoId)} className='px-6 py-4 cursor-pointer'>
+            x
+        </td>
+    </tr>
+  )
+}
+export default CategoryTableItem;

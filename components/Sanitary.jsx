@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import axios from 'axios';
+import { normalizeImageUrl } from '@/lib/utils/imageUtils';
 
 const Sanitary = () => {
   const [sanitary, setSanitary] = useState([]);
@@ -88,7 +89,7 @@ const Sanitary = () => {
                     {/* Image */}
                     <div className="relative h-64 w-full">
                       <Image
-                        src={item.image || '/placeholder-sanitary.jpg'}
+                        src={normalizeImageUrl(item.image || '/placeholder-sanitary.jpg')}
                         alt={item.name || 'Sanitary item'}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 20vw"

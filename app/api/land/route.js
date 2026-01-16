@@ -4,6 +4,7 @@ import LandModel from "@/lib/models/LandModel";
 import fs from "fs";
 import { writeFile } from "fs/promises";
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 
 
 // Api endpoint for getting all lands or a specific land by ID
@@ -16,22 +17,60 @@ async function GET(request) {
         const id = searchParams.get('id');
         
         if (id) {
+            // Validate ObjectId format
+            if (!mongoose.Types.ObjectId.isValid(id)) {
+                console.error('❌ Invalid ObjectId format:', id);
+                return NextResponse.json({ 
+                    success: false, 
+                    message: "Invalid land ID format" 
+                }, { status: 400 });
+            }
+            
             // Get specific land by ID
             const land = await LandModel.findById(id);
             if (!land) {
-                return NextResponse.json({ success: false, message: "Land not found" }, { status: 404 });
+                console.log('⚠️ Land not found:', id);
+                return NextResponse.json({ 
+                    success: false, 
+                    message: "Land not found" 
+                }, { status: 404 });
             }
-            return NextResponse.json({ success: true, land: land });
+            
+            // Convert to plain object to avoid serialization issues
+            const landData = land.toObject ? land.toObject() : land;
+            
+            return NextResponse.json({ 
+                success: true, 
+                land: landData 
+            });
         } else {
             // Get all lands
             const lands = await LandModel.find();
-            return NextResponse.json({ success: true, lands: lands });
+            // Convert to plain objects
+            const landsData = lands.map(l => l.toObject ? l.toObject() : l);
+            return NextResponse.json({ 
+                success: true, 
+                lands: landsData 
+            });
         }
     } catch (error) {
-        console.error('Error fetching lands:', error);
+        console.error('❌ Error fetching lands:', {
+            message: error.message,
+            name: error.name
+        });
+        
+        if (error.name === 'CastError') {
+            return NextResponse.json({ 
+                success: false, 
+                message: "Invalid land ID format" 
+            }, { status: 400 });
+        }
+        
         return NextResponse.json({ 
             success: false, 
-            message: error.message || "Error fetching lands"
+            message: process.env.NODE_ENV === 'development' 
+                ? `Error fetching lands: ${error.message}`
+                : "Error fetching lands. Please try again later."
         }, { status: 500 });
     }
 }
@@ -53,9 +92,9 @@ async function POST(request) {
             if (image && image.size > 0) {
                 const imageByteData = await image.arrayBuffer();
                 const buffer = Buffer.from(imageByteData);
-                const path = `./public/${timestamp}_${i}_${image.name}`;
+                const path = `./uploads/${timestamp}_${i}_${image.name}`;
                 await writeFile(path, buffer);
-                imageUrls.push(`/${timestamp}_${i}_${image.name}`);
+                imageUrls.push(`/api/uploads/${timestamp}_${i}_${image.name}`);
             }
         }
 
@@ -101,8 +140,12 @@ async function DELETE(request) {
         
         const landId = await request.nextUrl.searchParams.get('id');
         const land = await LandModel.findById(landId);
-        if (land && land.images && land.images[0]) {
-            fs.unlink(`./public/${land.images[0]}`,()=>{});
+        if (land && land.images && land.images.length > 0) {
+            // Delete all images associated with this land
+            land.images.forEach(imageUrl => {
+                const filename = imageUrl.replace('/api/uploads/', '');
+                fs.unlink(`./uploads/${filename}`,()=>{});
+            });
         }
         await LandModel.findByIdAndDelete(landId);
         return NextResponse.json({success: true, message: "Land deleted successfully"});

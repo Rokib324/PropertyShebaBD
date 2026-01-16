@@ -35,6 +35,12 @@ const SideBar = () => {
         <Link href='/admin/slider_list' className='font-semibold mt-5 flex items-center gap-2 py-1 px-3 sm:px-6 border border-solid border-black shadow-[-5px_5px_0px_#494949] hover:shadow-[-5px_5px_0px_#FF0000] transition-all duration-300'>
           <Image src={assets.blog_icon} alt='' width={28}/> <p>Slider List</p>
         </Link>
+        <Link href='/admin/add_categories' className='font-semibold flex items-center mt-5 gap-2 py-1 px-3 sm:px-6 border border-solid border-black shadow-[-5px_5px_0px_#494949] hover:shadow-[-5px_5px_0px_#FF0000] transition-all duration-300'>
+          <Image src={assets.add_icon} alt='' width={28}/> <p>Add Category</p>
+        </Link>
+        <Link href='/admin/Category_List' className='font-semibold mt-5 flex items-center gap-2 py-1 px-3 sm:px-6 border border-solid border-black shadow-[-5px_5px_0px_#494949] hover:shadow-[-5px_5px_0px_#FF0000] transition-all duration-300'>
+          <Image src={assets.blog_icon} alt='' width={28}/> <p>Category List</p>
+        </Link>
         <Link href='/admin/add_land' className='font-semibold mt-5 flex items-center gap-2 py-1 px-3 sm:px-6 border border-solid border-black shadow-[-5px_5px_0px_#494949] hover:shadow-[-5px_5px_0px_#FF0000] transition-all duration-300'>
           <Image src={assets.add_icon} alt='' width={28}/> <p>Add Land</p>
         </Link>

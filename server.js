@@ -2,9 +2,11 @@ const { createServer } = require('http')
 const { parse } = require('url')
 const next = require('next')
 
-const dev = process.env.NODE_ENV !== 'production'
+// Force production mode for cPanel deployment
+const dev = false
 const hostname = 'localhost'
-const port = 3000
+// Use PORT from environment variable (cPanel provides this) or default to 3000
+const port = process.env.PORT || 3000
 // when using middleware `hostname` and `port` must be provided below
 const app = next({ dev, hostname, port })
 const handle = app.getRequestHandler()

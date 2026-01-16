@@ -50,8 +50,8 @@ const MarbleItemTable = ({
             {category || 'No Category'}
           </span>
         </td>
-        <td className='px-6 py-4'>{color || 'No Color'}</td>
-        <td className='px-6 py-4'>
+        <td className='px-2 py-1'>{color || 'No Color'}</td>
+        <td className='px-2 py-1'>
           <span className={`px-2 py-1 rounded text-xs ${
             finish === 'polished' ? 'bg-green-100 text-green-800' :
             finish === 'honed' ? 'bg-blue-100 text-blue-800' :
@@ -62,16 +62,16 @@ const MarbleItemTable = ({
             {finish || 'No Finish'}
           </span>
         </td>
-        <td className='px-6 py-4'>{thickness || 'No Thickness'}</td>
-        <td className='px-6 py-4'>{size || 'No Size'}</td>
-        <td className='px-6 py-4 font-semibold text-green-600'>
+        <td className='px-2 py-1'>{thickness || 'No Thickness'}</td>
+        <td className='px-2 py-1'>{size || 'No Size'}</td>
+        <td className='px-2 py-1 font-semibold text-green-600'>
           {price ? `৳${price.toLocaleString()}` : 'No Price'}
         </td>
-        <td className='px-6 py-4 font-semibold text-blue-600'>
+        <td className='px-2 py-1 font-semibold text-blue-600'>
           {pricePerSqft ? `৳${pricePerSqft.toLocaleString()}` : 'No Price/Sqft'}
         </td>
-        <td className='px-6 py-4'>{origin || 'No Origin'}</td>
-        <td className='px-6 py-4'>
+        <td className='px-2 py-1'>{origin || 'No Origin'}</td>
+        <td className='px-2 py-1'>
           <span className={`px-2 py-1 rounded text-xs font-medium ${
             stock > 10 ? 'bg-green-100 text-green-800' :
             stock > 0 ? 'bg-yellow-100 text-yellow-800' :
@@ -80,14 +80,14 @@ const MarbleItemTable = ({
             {stock || 0} units
           </span>
         </td>
-        <td className='px-6 py-4'>
+        <td className='px-2 py-1'>
           <span className={`px-2 py-1 rounded-full text-xs font-medium ${
             isAvailable ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
           }`}>
             {isAvailable ? 'Available' : 'Unavailable'}
           </span>
         </td>
-        <td className='px-6 py-4 max-w-xs'>
+        <td className='px-2 py-1 max-w-xs'>
           {features && features.length > 0 ? (
             <div className='flex flex-wrap gap-1'>
               {features.slice(0, 2).map((feature, index) => (
@@ -105,10 +105,10 @@ const MarbleItemTable = ({
             <span className='text-gray-400 text-sm'>No Features</span>
           )}
         </td>
-        <td className='px-6 py-4 text-sm text-gray-500'>
+        <td className='px-2 py-1 text-sm text-gray-500'>
           {marbleDate.toDateString()}
         </td>
-        <td className='px-6 py-4'>
+        <td className='px-2 py-1 text-center'>
           <button 
             onClick={() => deleteMarble(mongoId)} 
             className='px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm font-medium'

@@ -3,20 +3,20 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import SliderTableItem from '@/components/AdminComponents/SliderTableItem'
+import CategoryTableItem from '@/components/AdminComponents/CategoryTable'
 const page = () => {
 
   const [slides, setSlides] = useState([]);
 
   const fetchSlides = async () => {
-    const response = await axios.get('/api/slider');
+    const response = await axios.get('/api/addCategory');
     if(response.data.success){
       setSlides(response.data.slides);
     }
   }
 
   const deleteSlide = async (mongoId) => {
-    const response = await axios.delete('/api/slider',{
+    const response = await axios.delete('/api/addCategory',{
       params: {
         id: mongoId
       }
@@ -38,20 +38,19 @@ const page = () => {
 
   return (
     <div className='flex-1 p-4'>
-      <h1 className='text-xl font-medium mb-5'>Slider List</h1>
+      <h1 className='text-xl font-medium mb-5'>Category List</h1>
       <div className='relative w-full overflow-x-auto mt-4 border border-gray-400 rounded-md'>
         <table className='w-full text-sm text-gray-500'>
           <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
             <tr>
-              <th scope='col' className='hidden sm:block px-6 py-3'>Slider Title</th>
-              <th scope='col' className='px-6 py-3'>Slider Description</th>
+              <th scope='col' className='hidden sm:block px-6 py-3'>Category Title</th>
               <th scope='col' className='px-6 py-3'>Date</th>
               <th scope='col' className='px-6 py-3'>Action</th>
             </tr>
           </thead>
           <tbody>
             {slides.map((item,index) =>{
-              return <SliderTableItem key={index} mongoId={item._id} title={item.title} description={item.description} image={item.image} date={item.date} deleteSlide={deleteSlide} />
+              return <CategoryTableItem key={index} mongoId={item._id} title={item.title} description={item.description} image={item.image} date={item.date} deleteCategory={deleteSlide} />
             })}
           </tbody>
         </table>

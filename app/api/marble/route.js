@@ -2,6 +2,7 @@ import connectDB from "@/lib/config/db"
 import MarbleModel from "@/lib/models/MarbleModel";
 import { writeFile } from "fs/promises";
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 
 
 // Api endpoint for getting all marbles or a specific marble by ID
@@ -14,22 +15,60 @@ async function GET(request) {
         const id = searchParams.get('id');
         
         if (id) {
+            // Validate ObjectId format
+            if (!mongoose.Types.ObjectId.isValid(id)) {
+                console.error('❌ Invalid ObjectId format:', id);
+                return NextResponse.json({ 
+                    success: false, 
+                    message: "Invalid marble ID format" 
+                }, { status: 400 });
+            }
+            
             // Get specific marble by ID
             const marble = await MarbleModel.findById(id);
             if (!marble) {
-                return NextResponse.json({ success: false, message: "Marble not found" }, { status: 404 });
+                console.log('⚠️ Marble not found:', id);
+                return NextResponse.json({ 
+                    success: false, 
+                    message: "Marble not found" 
+                }, { status: 404 });
             }
-            return NextResponse.json({ success: true, marble: marble });
+            
+            // Convert to plain object to avoid serialization issues
+            const marbleData = marble.toObject ? marble.toObject() : marble;
+            
+            return NextResponse.json({ 
+                success: true, 
+                marble: marbleData 
+            });
         } else {
             // Get all marbles
             const marbles = await MarbleModel.find();
-            return NextResponse.json({ success: true, marbles: marbles });
+            // Convert to plain objects
+            const marblesData = marbles.map(m => m.toObject ? m.toObject() : m);
+            return NextResponse.json({ 
+                success: true, 
+                marbles: marblesData 
+            });
         }
     } catch (error) {
-        console.error('Error fetching marbles:', error);
+        console.error('❌ Error fetching marbles:', {
+            message: error.message,
+            name: error.name
+        });
+        
+        if (error.name === 'CastError') {
+            return NextResponse.json({ 
+                success: false, 
+                message: "Invalid marble ID format" 
+            }, { status: 400 });
+        }
+        
         return NextResponse.json({ 
             success: false, 
-            message: error.message || "Error fetching marbles"
+            message: process.env.NODE_ENV === 'development' 
+                ? `Error fetching marbles: ${error.message}`
+                : "Error fetching marbles. Please try again later."
         }, { status: 500 });
     }
 }
@@ -42,13 +81,13 @@ async function POST(request) {
         const formData = await request.formData();
     const timestamp = Date.now();
     
-    // Handle image upload to public folder
+    // Handle image upload to uploads folder
     const image = formData.get('image');
     const imageByteData = await image.arrayBuffer();
     const buffer = Buffer.from(imageByteData);
-    const path = `./public/${timestamp}_${image.name}`;
+    const path = `./uploads/${timestamp}_${image.name}`;
     await writeFile(path,buffer);
-    const imgUrl = `/${timestamp}_${image.name}`;
+    const imgUrl = `/api/uploads/${timestamp}_${image.name}`;
 
     // Create a new blog
     const marbledata = {

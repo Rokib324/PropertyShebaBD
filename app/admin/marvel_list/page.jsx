@@ -7,108 +7,102 @@ import MarbleItemTable from '@/components/AdminComponents/MarbleItemTable'
 
 const page = () => {
 
-  const [marbles, setMarbles] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [marbles, setMarbles] = useState([])
+  const [loading, setLoading] = useState(true)
 
   const fetchMarbles = async () => {
     try {
-      setLoading(true);
-      const response = await axios.get('/api/marble');
-      if(response.data.success){
-        setMarbles(response.data.marbles);
+      setLoading(true)
+      const response = await axios.get('/api/marble')
+      if (response.data.success) {
+        setMarbles(response.data.marbles)
       }
     } catch (error) {
-      toast.error('Failed to fetch marble data');
-      console.error('Error fetching marbles:', error);
+      toast.error('Failed to fetch marble data')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
   const deleteMarble = async (mongoId) => {
     try {
       const response = await axios.delete('/api/marble', {
-        params: {
-          id: mongoId
-        }
-      });
-      if(response.data.success){
-        toast.success(response.data.message);
-        fetchMarbles();
+        params: { id: mongoId }
+      })
+      if (response.data.success) {
+        toast.success(response.data.message)
+        fetchMarbles()
       } else {
-        toast.error(response.data.message);
+        toast.error(response.data.message)
       }
-    } catch (error) {
-      toast.error('Failed to delete marble');
-      console.error('Error deleting marble:', error);
+    } catch {
+      toast.error('Failed to delete marble')
     }
   }
 
   useEffect(() => {
-    fetchMarbles();
-  }, []);
+    fetchMarbles()
+  }, [])
 
   if (loading) {
     return (
-      <div className='flex-1 pt-5 px-5 sm:pt-12 sm:pl-16'>
-        <div className='flex items-center justify-center h-64'>
-          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500'></div>
-        </div>
+      <div className="flex-1 p-6 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
       </div>
-    );
+    )
   }
 
   return (
-    <div className='flex-1 pt-5 px-5 sm:pt-12 sm:pl-16'>
-      <div className='flex justify-between items-center mb-5'>
-        <h1 className='text-2xl font-bold text-gray-800'>Marble & Stone Collection</h1>
-        <div className='text-sm text-gray-600'>
-          Total Items: <span className='font-semibold text-blue-600'>{marbles?.length || 0}</span>
-        </div>
+    <div className="flex-1 p-4">
+      <div className="flex mb-6">
+        <h1 className="text-2xl font-bold">
+          Marble & Stone Collection
+        </h1>
       </div>
-      
-      <div className='bg-white rounded-lg shadow-sm border border-gray-200'>
-        <div className='relative h-[80vh] overflow-x-auto'>
-          <table className='w-full text-sm text-gray-500'>
-            <thead className='text-xs text-gray-700 uppercase bg-gray-50 sticky top-0 z-10'>
+
+      {/* OUTER SCROLL WRAPPER */}
+      <div className="max-w-5xl border border-red-300 rounded-md">
+
+        {/* INNER VERTICAL SCROLL */}
+        <div className="relative h-[80vh] overflow-y-auto overflow-x-scroll">
+
+          <table className=" w-full
+              table-auto
+              border-collapse
+              text-xs
+              text-gray-900">
+            <thead className="sticky top-0 z-10 bg-gray-100 text-xs uppercase">
               <tr>
-                <th scope='col' className='hidden sm:table-cell px-6 py-4 text-left font-semibold'>Marble Details</th>
-                <th scope='col' className='px-6 py-4 text-left font-semibold'>Category</th>
-                <th scope='col' className='px-6 py-4 text-left font-semibold'>Color</th>
-                <th scope='col' className='px-6 py-4 text-left font-semibold'>Finish</th>
-                <th scope='col' className='px-6 py-4 text-left font-semibold'>Thickness</th>
-                <th scope='col' className='px-6 py-4 text-left font-semibold'>Size</th>
-                <th scope='col' className='px-6 py-4 text-left font-semibold'>Price</th>
-                <th scope='col' className='px-6 py-4 text-left font-semibold'>Price/Sqft</th>
-                <th scope='col' className='px-6 py-4 text-left font-semibold'>Origin</th>
-                <th scope='col' className='px-6 py-4 text-left font-semibold'>Stock</th>
-                <th scope='col' className='px-6 py-4 text-left font-semibold'>Status</th>
-                <th scope='col' className='px-6 py-4 text-left font-semibold'>Features</th>
-                <th scope='col' className='px-6 py-4 text-left font-semibold'>Date Added</th>
-                <th scope='col' className='px-6 py-4 text-left font-semibold'>Action</th>
+                <th className="px-4 py-3 text-left">Marble Details</th>
+                <th className="px-4 py-3 text-left">Category</th>
+                <th className="px-4 py-3 text-left">Color</th>
+                <th className="px-4 py-3 text-left">Finish</th>
+                <th className="px-4 py-3 text-left">Thickness</th>
+                <th className="px-4 py-3 text-left">Size</th>
+                <th className="px-4 py-3 text-left">Price</th>
+                <th className="px-4 py-3 text-left">Price / Sqft</th>
+                <th className="px-4 py-3 text-left">Origin</th>
+                <th className="px-4 py-3 text-left">Stock</th>
+                <th className="px-4 py-3 text-left">Status</th>
+                <th className="px-4 py-3 text-left">Features</th>
+                <th className="px-4 py-3 text-left">Date</th>
+                <th className="px-4 py-3 text-center">Action</th>
               </tr>
             </thead>
-            <tbody>
-              {!marbles || marbles.length === 0 ? (
+
+            <tbody className="bg-white divide-y">
+              {marbles.length === 0 ? (
                 <tr>
-                  <td colSpan="13" className='px-6 py-12 text-center text-gray-500'>
-                    <div className='flex flex-col items-center justify-center'>
-                      <div className='w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4'>
-                        <svg className='w-8 h-8 text-gray-400' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                          <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' />
-                        </svg>
-                      </div>
-                      <p className='text-lg font-medium text-gray-600'>No Marble Items Found</p>
-                      <p className='text-sm text-gray-500 mt-1'>Add your first marble item to get started</p>
-                    </div>
+                  <td colSpan="14" className="py-12 text-center text-gray-500">
+                    No Marble Items Found
                   </td>
                 </tr>
               ) : (
-                marbles?.map((item, index) => (
-                  <MarbleItemTable 
-                    key={item._id || index} 
-                    mongoId={item._id} 
-                    name={item.name} 
+                marbles.map((item, index) => (
+                  <MarbleItemTable
+                    key={item._id || index}
+                    mongoId={item._id}
+                    name={item.name}
                     category={item.category}
                     color={item.color}
                     finish={item.finish}
@@ -122,13 +116,14 @@ const page = () => {
                     features={item.features}
                     image={item.image}
                     description={item.description}
-                    createdAt={item.createdAt || item.created_at} 
-                    deleteMarble={deleteMarble} 
+                    createdAt={item.createdAt || item.created_at}
+                    deleteMarble={deleteMarble}
                   />
                 ))
               )}
             </tbody>
           </table>
+
         </div>
       </div>
     </div>

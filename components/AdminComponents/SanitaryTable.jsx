@@ -55,7 +55,7 @@ const SanitaryItemTable = ({
       {/* Image + Basic info */}
       <th
         scope="row"
-        className="px-6 py-4 font-medium text-gray-900 items-center whitespace-nowrap hidden sm:flex gap-4"
+        className="px-2 py-1 font-medium text-gray-900 items-center whitespace-nowrap hidden sm:flex gap-4"
       >
         <Image
           src={image || '/sanitary1.jpg'}
@@ -73,7 +73,7 @@ const SanitaryItemTable = ({
       </th>
 
       {/* Category */}
-      <td className="px-6 py-4">
+      <td className="px-2 py-1">
         <span
           className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryClass(
             category
@@ -84,32 +84,32 @@ const SanitaryItemTable = ({
       </td>
 
       {/* Brand */}
-      <td className="px-6 py-4">
+      <td className="px-2 py-1">
         {brand || <span className="text-gray-400">No Brand</span>}
       </td>
 
       {/* Material */}
-      <td className="px-6 py-4">
+      <td className="px-2 py-1">
         {material || <span className="text-gray-400">No Material</span>}
       </td>
 
       {/* Color */}
-      <td className="px-6 py-4">
+      <td className="px-2 py-1">
         {color || <span className="text-gray-400">No Color</span>}
       </td>
 
       {/* Price */}
-      <td className="px-6 py-4 font-semibold text-green-600">
+      <td className="px-2 py-1 font-semibold text-green-600">
         {price ? `৳${price.toLocaleString()}` : 'No Price'}
       </td>
 
       {/* Original Price */}
-      <td className="px-6 py-4 text-gray-500">
+      <td className="px-2 py-1 text-gray-500">
         {originalPrice ? `৳${originalPrice.toLocaleString()}` : 'N/A'}
       </td>
 
       {/* Discount */}
-      <td className="px-6 py-4">
+      <td className="px-2 py-1">
         {discountPercentage ? (
           <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
             -{discountPercentage}%
@@ -120,7 +120,7 @@ const SanitaryItemTable = ({
       </td>
 
       {/* Stock */}
-      <td className="px-6 py-4">
+      <td className="px-2 py-1">
         <span
           className={`px-2 py-1 rounded text-xs font-medium ${
             stock > 10
@@ -135,7 +135,7 @@ const SanitaryItemTable = ({
       </td>
 
       {/* Availability */}
-      <td className="px-6 py-4">
+      <td className="px-2 py-1">
         <span
           className={`px-2 py-1 rounded-full text-xs font-medium ${
             isAvailable ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
@@ -146,7 +146,7 @@ const SanitaryItemTable = ({
       </td>
 
       {/* Features */}
-      <td className="px-6 py-4 max-w-xs">
+      <td className="px-2 py-1 max-w-xs">
         {features && features.length > 0 ? (
           <div className="flex flex-wrap gap-1">
             {features.slice(0, 2).map((feature, index) => (
@@ -169,12 +169,12 @@ const SanitaryItemTable = ({
       </td>
 
       {/* Created At */}
-      <td className="px-6 py-4 text-sm text-gray-500">
+      <td className="px-2 py-1 text-sm text-gray-500">
         {sanitaryDate ? sanitaryDate.toDateString() : 'No Date'}
       </td>
 
       {/* Actions */}
-      <td className="px-6 py-4">
+      <td className="px-2 py-1">
         <button
           onClick={() => deleteSanitary(mongoId)}
           className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm font-medium"
